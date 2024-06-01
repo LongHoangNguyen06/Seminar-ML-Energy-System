@@ -127,7 +127,6 @@ def save_data(
     Installed_Capacity_Germany.to_csv(
         os.path.join(ROOT_DIR, "Installed_Capacity_Germany.csv"),
         sep=";",
-        thousands=".",
         decimal=",",
         index=False,
     )
@@ -142,7 +141,6 @@ def save_data(
     Realised_Supply_Germany.to_csv(
         os.path.join(ROOT_DIR, "Realised_Supply_Germany.csv"),
         sep=";",
-        thousands=".",
         decimal=",",
         index=False,
     )
@@ -150,7 +148,6 @@ def save_data(
     Realised_Demand_Germany.to_csv(
         os.path.join(ROOT_DIR, "Realised_Demand_Germany.csv"),
         sep=";",
-        thousands=".",
         decimal=",",
         index=False,
     )
