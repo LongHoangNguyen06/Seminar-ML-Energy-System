@@ -118,15 +118,12 @@ def save_data(
         Configuration object.
     data_type : str
         Type of data to load. Options are:
-        - raw
         - preprocessed
     """
-    if data_type == "raw":
-        ROOT_DIR = CONF.data.raw_data_dir
-    elif data_type == "preprocessed":
+    if data_type == "preprocessed":
         ROOT_DIR = CONF.data.preprocessed_data_dir
     else:
-        raise ValueError("data_type must be either 'raw' or 'preprocessed'")
+        raise ValueError("data_type must be 'preprocessed'")
 
     Installed_Capacity_Germany.to_csv(
         os.path.join(ROOT_DIR, "Installed_Capacity_Germany.csv"),
@@ -225,9 +222,9 @@ def save_data_inspection(
     """
 
     if data_type == "raw":
-        ROOT_DIR = CONF.data.raw_data_dir
+        ROOT_DIR = CONF.data.raw_inspection_dir
     elif data_type == "preprocessed":
-        ROOT_DIR = CONF.data.preprocessed_data_dir
+        ROOT_DIR = CONF.data.preprocessed_data_inspection_dir
     else:
         raise ValueError("data_type must be either 'raw' or 'preprocessed'")
 
