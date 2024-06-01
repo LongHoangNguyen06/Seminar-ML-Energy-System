@@ -47,6 +47,7 @@ def load_data(CONF, data_type="raw"):
     Prices_Europe = pd.read_csv(
         f"{ROOT_DIR}/Prices_Europe.csv",
         sep=";",
+        thousands=".",
         decimal=",",
         na_values=["-"],
         parse_dates=["Date from", "Date to"],
