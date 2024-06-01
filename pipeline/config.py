@@ -18,4 +18,4 @@ os.makedirs(CONF.data_processing.raw_data_dir, exist_ok=True)
 os.makedirs(CONF.data_processing.inspection_dir, exist_ok=True)
 os.makedirs(CONF.data_processing.preprocessed_data_dir, exist_ok=True)
 
-CONF.data_processing.na_values = "drop_rows"  # drop_rows, drop_colums, fillna
+CONF.data_processing.na_values = "drop_columns"  # drop_rows, drop_columns, fillna

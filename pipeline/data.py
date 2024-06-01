@@ -61,8 +61,32 @@ def load_raw_data(CONF):
     weather = pd.read_csv(
         f"{ROOT_DIR}/Weather_Data_Germany.csv",
         sep=",",
-        decimal=",",
         na_values=["-"],
         parse_dates=["forecast_origin", "time"],
     )
     return capacity, prices, supply, demand, weather
+
+
+def process_na_values(data, CONF):
+    """
+    Process missing values in the data.
+    Args
+    ----
+    data : pd.DataFrame
+        Data to process.
+    CONF : DotMap
+        Configuration object.
+
+    Returns
+    -------
+    data : pd.DataFrame
+        Data with missing values processed.
+    """
+    if CONF.data_processing.na_values == "drop_rows":
+        data = data.dropna(axis=0, how="any")
+    elif CONF.data_processing.na_values == "drop_columns":
+        data = data.dropna(axis=1, how="any")
+    elif CONF.data_processing.na_values == "fillna":
+        data = data.fillna(0)
+    assert not data.isnull().values.any()
+    return data
