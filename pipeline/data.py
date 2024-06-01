@@ -1,33 +1,38 @@
-import os
-
 import pandas as pd
 
 
-def load_raw_data(CONF):
+def load_data(CONF, data_type="raw"):
     """
     Load all data from the data folder.
     Args
     ----
     CONF : DotMap
         Configuration object.
-
+    data_type : str
+        Type of data to load. Options are:
+        - raw
+        - preprocessed
     Returns
     -------
-    capacity : pd.DataFrame
-        Installed capacity of power plants in Germany.
-    prices : pd.DataFrame
-        Electricity prices in Europe.
-    supply : pd.DataFrame
-        Realised supply of electricity in Germany.
-    demand : pd.DataFrame
-        Realised demand of electricity in Germany.
-    weather : pd.DataFrame
+    Installed_Capacity_Germany : pd.DataFrame
+        Installed Installed_Capacity_Germany of power plants in Germany.
+    Prices_Europe : pd.DataFrame
+        Electricity Prices_Europe in Europe.
+    Realised_Supply_Germany : pd.DataFrame
+        Realised_Supply_Germany of electricity in Germany.
+    Realised_Demand_Germany : pd.DataFrame
+        Realised_Demand_Germany of electricity in Germany.
+    Weather_Data_Germany : pd.DataFrame
         Weather data in Germany.
     """
-    ROOT_DIR = os.path.join(
-        CONF.data_processing.data_dir, CONF.data_processing.raw_data_dir
-    )
-    capacity = pd.read_csv(
+    if data_type == "raw":
+        ROOT_DIR = CONF.data.raw_data_dir
+    elif data_type == "preprocessed":
+        ROOT_DIR = CONF.data.preprocessed_data_dir
+    else:
+        raise ValueError("data_type must be either 'raw' or 'preprocessed'")
+
+    Installed_Capacity_Germany = pd.read_csv(
         f"{ROOT_DIR}/Installed_Capacity_Germany.csv",
         sep=";",
         thousands=".",
@@ -35,14 +40,14 @@ def load_raw_data(CONF):
         na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
-    prices = pd.read_csv(
+    Prices_Europe = pd.read_csv(
         f"{ROOT_DIR}/Prices_Europe.csv",
         sep=";",
         decimal=",",
         na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
-    supply = pd.read_csv(
+    Realised_Supply_Germany = pd.read_csv(
         f"{ROOT_DIR}/Realised_Supply_Germany.csv",
         sep=";",
         thousands=".",
@@ -50,7 +55,7 @@ def load_raw_data(CONF):
         na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
-    demand = pd.read_csv(
+    Realised_Demand_Germany = pd.read_csv(
         f"{ROOT_DIR}/Realised_Demand_Germany.csv",
         sep=";",
         thousands=".",
@@ -58,13 +63,19 @@ def load_raw_data(CONF):
         na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
-    weather = pd.read_csv(
+    Weather_Data_Germany = pd.read_csv(
         f"{ROOT_DIR}/Weather_Data_Germany.csv",
         sep=",",
         na_values=["-"],
         parse_dates=["forecast_origin", "time"],
     )
-    return capacity, prices, supply, demand, weather
+    return (
+        Installed_Capacity_Germany,
+        Prices_Europe,
+        Realised_Supply_Germany,
+        Realised_Demand_Germany,
+        Weather_Data_Germany,
+    )
 
 
 def process_na_values(data, CONF):
@@ -82,11 +93,13 @@ def process_na_values(data, CONF):
     data : pd.DataFrame
         Data with missing values processed.
     """
-    if CONF.data_processing.na_values == "drop_rows":
+    if CONF.data.na_values == "drop_rows":
         data = data.dropna(axis=0, how="any")
-    elif CONF.data_processing.na_values == "drop_columns":
+    elif CONF.data.na_values == "drop_columns":
         data = data.dropna(axis=1, how="any")
-    elif CONF.data_processing.na_values == "fillna":
-        data = data.fillna(0)
+    elif CONF.data.na_values == "fillna":
+        data = data.fillna(
+            0
+        )  # TODO: Implement a more sophisticated way to fill missing values
     assert not data.isnull().values.any()
     return data
