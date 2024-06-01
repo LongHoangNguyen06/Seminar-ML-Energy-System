@@ -25,12 +25,14 @@ def load_raw_data():
         sep=";",
         thousands=".",
         decimal=",",
+        na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
     prices = pd.read_csv(
         f"{ROOT_DIR}/Prices_Europe.csv",
         sep=";",
         decimal=",",
+        na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
     supply = pd.read_csv(
@@ -38,6 +40,7 @@ def load_raw_data():
         sep=";",
         thousands=".",
         decimal=",",
+        na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
     demand = pd.read_csv(
@@ -45,12 +48,14 @@ def load_raw_data():
         sep=";",
         thousands=".",
         decimal=",",
+        na_values=["-"],
         parse_dates=["Date from", "Date to"],
     )
     weather = pd.read_csv(
         f"{ROOT_DIR}/Weather_Data_Germany.csv",
         sep=",",
         decimal=",",
+        na_values=["-"],
         parse_dates=["forecast_origin", "time"],
     )
     return capacity, prices, supply, demand, weather
