@@ -3,7 +3,7 @@ import pandas as pd
 ROOT_DIR = "/home/long/Desktop/seminar-ml-energy-system/data"
 
 
-def load_data():
+def load_raw_data():
     """
     Load all data from the data folder.
 
