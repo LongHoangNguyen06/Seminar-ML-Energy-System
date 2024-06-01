@@ -44,6 +44,7 @@ def save_data_inspection(
     ProfileReport(
         Installed_Capacity_Germany,
         title=f"{data_type} Installed_Capacity_Germany",
+        progress_bar=False,
     ).to_file(
         os.path.join(
             ROOT_DIR,
@@ -51,7 +52,9 @@ def save_data_inspection(
         )
     )
 
-    ProfileReport(Prices_Europe, title=f"{data_type} Prices_Europe").to_file(
+    ProfileReport(
+        Prices_Europe, title=f"{data_type} Prices_Europe", progress_bar=False
+    ).to_file(
         os.path.join(
             ROOT_DIR,
             "Prices_Europe.html",
@@ -59,7 +62,9 @@ def save_data_inspection(
     )
 
     ProfileReport(
-        Realised_Supply_Germany, title=f"{data_type} Realised_Supply_Germany"
+        Realised_Supply_Germany,
+        title=f"{data_type} Realised_Supply_Germany",
+        progress_bar=False,
     ).to_file(
         os.path.join(
             ROOT_DIR,
@@ -68,7 +73,9 @@ def save_data_inspection(
     )
 
     ProfileReport(
-        Realised_Demand_Germany, title=f"{data_type} Realised_Demand_Germany"
+        Realised_Demand_Germany,
+        title=f"{data_type} Realised_Demand_Germany",
+        progress_bar=False,
     ).to_file(
         os.path.join(
             ROOT_DIR,
@@ -79,6 +86,7 @@ def save_data_inspection(
     pr = ProfileReport(
         Weather_Data_Germany,
         title=f"{data_type} Weather_Data_Germany",
+        progress_bar=False,
         minimal=True,  # noqa: E501
     )
     pr.to_file(
