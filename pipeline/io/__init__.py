@@ -1,11 +1,15 @@
+import os
+
 import pandas as pd
 
-ROOT_DIR = "/home/long/Desktop/seminar-ml-energy-system/data"
 
-
-def load_raw_data():
+def load_raw_data(CONF):
     """
     Load all data from the data folder.
+    Args
+    ----
+    CONF : DotMap
+        Configuration object.
 
     Returns
     -------
@@ -20,6 +24,9 @@ def load_raw_data():
     weather : pd.DataFrame
         Weather data in Germany.
     """
+    ROOT_DIR = os.path.join(
+        CONF.data_processing.data_dir, CONF.data_processing.raw_data_dir
+    )
     capacity = pd.read_csv(
         f"{ROOT_DIR}/Installed_Capacity_Germany.csv",
         sep=";",
