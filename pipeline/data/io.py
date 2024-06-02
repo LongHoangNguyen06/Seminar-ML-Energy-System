@@ -1,6 +1,13 @@
 import os
+from datetime import datetime
 
 import pandas as pd
+
+CAPACITY_FORMAT = "%d.%m.%y"
+STANDARD_FORMAT = "%d.%m.%y %H:%M"
+WEATHER_FORMAT = "%Y-%m-%d %H:%M:%S"
+DATE_COLUMNS = ["Date from", "Date to"]
+DATE_COLUMNS_WEATHER = ["forecast_origin", "time"]
 
 
 def load_data(CONF, data_type="raw"):
@@ -40,7 +47,8 @@ def load_data(CONF, data_type="raw"):
         thousands=".",
         decimal=",",
         na_values=["-"],
-        parse_dates=["Date from", "Date to"],
+        parse_dates=DATE_COLUMNS,
+        date_parser=lambda x: datetime.strptime(x.strip(), CAPACITY_FORMAT),
     )
     print("Loaded Installed_Capacity_Germany successfully.")
 
@@ -50,7 +58,8 @@ def load_data(CONF, data_type="raw"):
         thousands=".",
         decimal=",",
         na_values=["-"],
-        parse_dates=["Date from", "Date to"],
+        parse_dates=DATE_COLUMNS,
+        date_parser=lambda x: datetime.strptime(x.strip(), STANDARD_FORMAT),
     )
     print("Loaded Prices_Europe successfully.")
 
@@ -60,7 +69,8 @@ def load_data(CONF, data_type="raw"):
         thousands=".",
         decimal=",",
         na_values=["-"],
-        parse_dates=["Date from", "Date to"],
+        parse_dates=DATE_COLUMNS,
+        date_parser=lambda x: datetime.strptime(x.strip(), STANDARD_FORMAT),
     )
     print("Loaded Realised_Supply_Germany successfully.")
 
@@ -70,17 +80,20 @@ def load_data(CONF, data_type="raw"):
         thousands=".",
         decimal=",",
         na_values=["-"],
-        parse_dates=["Date from", "Date to"],
+        parse_dates=DATE_COLUMNS,
+        date_parser=lambda x: datetime.strptime(x.strip(), STANDARD_FORMAT),
     )
     print("Loaded Realised_Demand_Germany successfully.")
 
+    path = f"{ROOT_DIR}/Weather_Data_Germany.csv"
     Weather_Data_Germany = pd.read_csv(
-        f"{ROOT_DIR}/Weather_Data_Germany.csv",
+        path,
         sep=",",
         na_values=["-"],
-        parse_dates=["forecast_origin", "time"],
+        parse_dates=DATE_COLUMNS_WEATHER,
+        date_parser=lambda x: datetime.strptime(x.strip(), WEATHER_FORMAT),
     )
-    print("Loaded Weather_Data_Germany successfully.")
+    print(f"Loaded Weather_Data_Germany from '{path}' successfully.")
 
     return (
         Installed_Capacity_Germany,
@@ -124,6 +137,19 @@ def save_data(
         ROOT_DIR = CONF.data.preprocessed_data_dir
     else:
         raise ValueError("data_type must be 'preprocessed'")
+
+    # Define a general function to format datetime columns before saving
+    def format_datetime(df, datetime_columns, format):
+        for col in datetime_columns:
+            if col in df.columns:
+                df[col] = df[col].dt.strftime(format)
+
+    # Format datetime columns
+    format_datetime(Installed_Capacity_Germany, DATE_COLUMNS, CAPACITY_FORMAT)
+    format_datetime(Prices_Europe, DATE_COLUMNS, STANDARD_FORMAT)
+    format_datetime(Realised_Supply_Germany, DATE_COLUMNS, STANDARD_FORMAT)
+    format_datetime(Realised_Demand_Germany, DATE_COLUMNS, STANDARD_FORMAT)
+    format_datetime(Weather_Data_Germany, DATE_COLUMNS_WEATHER, WEATHER_FORMAT)
 
     Installed_Capacity_Germany.to_csv(
         os.path.join(ROOT_DIR, "Installed_Capacity_Germany.csv"),
