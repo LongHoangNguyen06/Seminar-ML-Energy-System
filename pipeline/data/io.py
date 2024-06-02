@@ -41,8 +41,9 @@ def load_data(CONF, data_type="raw"):
     else:
         raise ValueError("data_type must be either 'raw' or 'preprocessed'")
 
+    path = os.path.join(ROOT_DIR, "Installed_Capacity_Germany.csv")
     Installed_Capacity_Germany = pd.read_csv(
-        f"{ROOT_DIR}/Installed_Capacity_Germany.csv",
+        path,
         sep=";",
         thousands=".",
         decimal=",",
@@ -50,10 +51,11 @@ def load_data(CONF, data_type="raw"):
         parse_dates=DATE_COLUMNS,
         date_parser=lambda x: datetime.strptime(x.strip(), CAPACITY_FORMAT),
     )
-    print("Loaded Installed_Capacity_Germany successfully.")
+    print(f"Loaded Installed_Capacity_Germany from '{path}' successfully.")
 
+    path = os.path.join(ROOT_DIR, "Prices_Europe.csv")
     Prices_Europe = pd.read_csv(
-        f"{ROOT_DIR}/Prices_Europe.csv",
+        path,
         sep=";",
         thousands=".",
         decimal=",",
@@ -61,10 +63,11 @@ def load_data(CONF, data_type="raw"):
         parse_dates=DATE_COLUMNS,
         date_parser=lambda x: datetime.strptime(x.strip(), STANDARD_FORMAT),
     )
-    print("Loaded Prices_Europe successfully.")
+    print(f"Loaded Prices_Europe from '{path}' successfully.")
 
+    path = os.path.join(ROOT_DIR, "Realised_Supply_Germany.csv")
     Realised_Supply_Germany = pd.read_csv(
-        f"{ROOT_DIR}/Realised_Supply_Germany.csv",
+        path,
         sep=";",
         thousands=".",
         decimal=",",
@@ -72,10 +75,11 @@ def load_data(CONF, data_type="raw"):
         parse_dates=DATE_COLUMNS,
         date_parser=lambda x: datetime.strptime(x.strip(), STANDARD_FORMAT),
     )
-    print("Loaded Realised_Supply_Germany successfully.")
+    print(f"Loaded Realised_Supply_Germany from '{path}' successfully.")
 
+    path = os.path.join(ROOT_DIR, "Reaslised_Demand_Germany.csv")
     Realised_Demand_Germany = pd.read_csv(
-        f"{ROOT_DIR}/Realised_Demand_Germany.csv",
+        path,
         sep=";",
         thousands=".",
         decimal=",",
@@ -83,9 +87,9 @@ def load_data(CONF, data_type="raw"):
         parse_dates=DATE_COLUMNS,
         date_parser=lambda x: datetime.strptime(x.strip(), STANDARD_FORMAT),
     )
-    print("Loaded Realised_Demand_Germany successfully.")
+    print(f"Loaded Realised_Demand_Germany from '{path}' successfully.")
 
-    path = f"{ROOT_DIR}/Weather_Data_Germany.csv"
+    path = os.path.join(ROOT_DIR, "Weather_Data_Germany.csv")
     Weather_Data_Germany = pd.read_csv(
         path,
         sep=",",
@@ -151,36 +155,41 @@ def save_data(
     format_datetime(Realised_Demand_Germany, DATE_COLUMNS, STANDARD_FORMAT)
     format_datetime(Weather_Data_Germany, DATE_COLUMNS_WEATHER, WEATHER_FORMAT)
 
+    path = os.path.join(ROOT_DIR, "Installed_Capacity_Germany.csv")
     Installed_Capacity_Germany.to_csv(
-        os.path.join(ROOT_DIR, "Installed_Capacity_Germany.csv"),
+        path,
         sep=";",
         decimal=",",
         index=False,
     )
 
+    path = os.path.join(ROOT_DIR, "Prices_Europe.csv")
     Prices_Europe.to_csv(
-        os.path.join(ROOT_DIR, "Prices_Europe.csv"),
+        path,
         sep=";",
         decimal=",",
         index=False,
     )
 
+    path = os.path.join(ROOT_DIR, "Realised_Supply_Germany.csv")
     Realised_Supply_Germany.to_csv(
-        os.path.join(ROOT_DIR, "Realised_Supply_Germany.csv"),
+        path,
         sep=";",
         decimal=",",
         index=False,
     )
 
+    path = os.path.join(ROOT_DIR, "Reaslised_Demand_Germany.csv")
     Realised_Demand_Germany.to_csv(
-        os.path.join(ROOT_DIR, "Realised_Demand_Germany.csv"),
+        path,
         sep=";",
         decimal=",",
         index=False,
     )
 
+    path = os.path.join(ROOT_DIR, "Weather_Data_Germany.csv")
     Weather_Data_Germany.to_csv(
-        os.path.join(ROOT_DIR, "Weather_Data_Germany.csv"),
+        path,
         sep=",",
         index=False,
     )
