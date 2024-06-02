@@ -99,6 +99,28 @@ def load_data(CONF, data_type="raw"):
     )
     print(f"Loaded Weather_Data_Germany from '{path}' successfully.")
 
+    if data_type == "raw":
+        path = os.path.join(ROOT_DIR, "Weather_Data_Germany_2022.csv")
+        Weather_Data_Germany_2022 = pd.read_csv(
+            path,
+            sep=",",
+            na_values=["-"],
+            parse_dates=["time"],
+            date_parser=lambda x: datetime.strptime(x.strip(), WEATHER_FORMAT),
+        )
+        Weather_Data_Germany_2022["forecast_origin"] = pd.to_datetime(
+            Weather_Data_Germany_2022["forecast_origin"]
+        )
+        print(f"Loaded Weather_Data_Germany_2022 from '{path}' successfully.")
+        return (
+            Installed_Capacity_Germany,
+            Prices_Europe,
+            Realised_Supply_Germany,
+            Realised_Demand_Germany,
+            Weather_Data_Germany,
+            Weather_Data_Germany_2022,
+        )
+
     return (
         Installed_Capacity_Germany,
         Prices_Europe,
@@ -162,6 +184,7 @@ def save_data(
         decimal=",",
         index=False,
     )
+    print(f"Saved Installed_Capacity_Germany to '{path}' successfully.")
 
     path = os.path.join(ROOT_DIR, "Prices_Europe.csv")
     Prices_Europe.to_csv(
@@ -170,6 +193,7 @@ def save_data(
         decimal=",",
         index=False,
     )
+    print(f"Saved Prices_Europe to '{path}' successfully.")
 
     path = os.path.join(ROOT_DIR, "Realised_Supply_Germany.csv")
     Realised_Supply_Germany.to_csv(
@@ -178,6 +202,7 @@ def save_data(
         decimal=",",
         index=False,
     )
+    print(f"Saved Realised_Supply_Germany to '{path}' successfully.")
 
     path = os.path.join(ROOT_DIR, "Reaslised_Demand_Germany.csv")
     Realised_Demand_Germany.to_csv(
@@ -186,6 +211,7 @@ def save_data(
         decimal=",",
         index=False,
     )
+    print(f"Saved Realised_Demand_Germany to '{path}' successfully.")
 
     path = os.path.join(ROOT_DIR, "Weather_Data_Germany.csv")
     Weather_Data_Germany.to_csv(
@@ -193,3 +219,4 @@ def save_data(
         sep=",",
         index=False,
     )
+    print(f"Saved Weather_Data_Germany to '{path}' successfully.")

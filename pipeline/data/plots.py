@@ -20,7 +20,7 @@ def plot_df(df, df_name, CONF):
     ncols = math.ceil(num_columns / nrows)
 
     fig, axes = plt.subplots(
-        nrows=nrows, ncols=ncols, figsize=(30, 20), constrained_layout=True
+        nrows=nrows, ncols=ncols, figsize=(20, 10), constrained_layout=True
     )
     fig.suptitle("Overview of All Columns")
 

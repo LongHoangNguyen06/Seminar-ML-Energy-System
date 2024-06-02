@@ -11,6 +11,7 @@ def save_data_inspection(
     Weather_Data_Germany,
     CONF,
     data_type="raw",
+    Weather_Data_Germany_2022=None,
 ):
     """
     Save data inspection reports for all data.
@@ -26,6 +27,8 @@ def save_data_inspection(
         Realised_Demand_Germany of electricity in Germany.
     Weather_Data_Germany : pd.DataFrame
         Weather data in Germany.
+    Weather_Data_Germany_2022 : pd.DataFrame
+        Weather data in Germany for 2022.
     CONF : DotMap
         Configuration object.
     data_type : str
@@ -83,16 +86,28 @@ def save_data_inspection(
         )
     )
 
-    pr = ProfileReport(
+    ProfileReport(
         Weather_Data_Germany,
         title=f"{data_type} Weather_Data_Germany",
         progress_bar=False,
         minimal=True,  # noqa: E501
-    )
-    pr.to_file(
+    ).to_file(
         os.path.join(
             ROOT_DIR,
             "Weather_Data_Germany.html",
         )
     )
+
+    if Weather_Data_Germany_2022 is not None:
+        ProfileReport(
+            Weather_Data_Germany_2022,
+            title=f"{data_type} Weather_Data_Germany_2022",
+            progress_bar=False,
+            minimal=True,  # noqa: E501
+        ).to_file(
+            os.path.join(
+                ROOT_DIR,
+                "Weather_Data_Germany_2022.html",
+            )
+        )
     print(f"Saved {data_type} data inspection successfully.")
