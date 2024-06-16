@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+import joblib
 import pandas as pd
 
 CAPACITY_FORMAT = "%d.%m.%y"
@@ -220,3 +221,46 @@ def save_data(
         index=False,
     )
     print(f"Saved Weather_Data_Germany to '{path}' successfully.")
+
+
+def save_scalers(scalers, name, CONF):
+    """
+    Save the scalers to the preprocessed_data_dir.
+    Args
+    ----
+    scalers : dict
+        Dictionary containing the scalers used for each feature.
+    name : str
+        Name of the scaler file.
+    CONF : DotMap
+        Configuration object.
+    """
+    directory = os.path.join(CONF.data.preprocessed_data_dir)
+    # Path for the scalers file
+    path = os.path.join(directory, f"{name}.save")
+    joblib.dump(scalers, path)
+    print(f"Saved scalers to '{path}' successfully.")
+
+
+def load_scalers(name, CONF):
+    """
+    Load the scalers from a file using joblib, based on
+    the specified name and configuration.
+
+    Args
+    ----
+    name : str
+        Name of the scaler file without extension.
+    CONF : DotMap
+        Configuration object defining paths.
+
+    Returns
+    -------
+    scalers : dict
+        Dictionary containing the loaded scalers.
+    """
+    # Construct the full path to the scaler file
+    path = os.path.join(CONF.data.preprocessed_data_dir, f"{name}.save")
+    # Load and return the scalers from the specified path
+    scalers = joblib.load(path)
+    return scalers

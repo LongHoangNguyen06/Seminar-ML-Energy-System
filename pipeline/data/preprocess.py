@@ -1,5 +1,22 @@
 import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
+
+
+class CustomScaler(BaseEstimator, TransformerMixin):
+    def __init__(self, constant=1):
+        self.constant = constant
+
+    def fit(self, X, y=None):
+        # Custom logic for fitting, if necessary
+        return self
+
+    def transform(self, X):
+        return X / self.constant
+
+    def inverse_transform(self, X):
+        return X * self.constant
+
 
 def process_na_values(data: pd.DataFrame, CONF):
     """
@@ -27,10 +44,12 @@ def process_na_values(data: pd.DataFrame, CONF):
     assert not data.isnull().values.any()
     return data
 
+
 # Define a function to split the data
 def split_data(df: pd.DataFrame, column_name: str):
     """
-    Split the data into train, validation, and test sets based on the year in the specified column.
+    Split the data into train, validation, and test sets based
+    on the year in the specified column.
     Args
     ----
     df : pd.DataFrame
@@ -49,31 +68,50 @@ def split_data(df: pd.DataFrame, column_name: str):
 
     return df
 
-def normalize_data(df, ignore_features=list[str]):
+
+def normalize_data(df, ignore_features=list[str], constant=None):
     """
-    Scale the data using StandardScaler.
-    Args
+    Scale the data using StandardScaler or custom constants.
+
+    Args:
     ----
     df : pd.DataFrame
         DataFrame to scale.
     ignore_features : list
         List of features to ignore during scaling.
+    constant : float, optional
+        customized normalizing constants for each feature.
+
+    Returns:
+    -------
+    df : pd.DataFrame
+        Scaled DataFrame.
+    scalers : dict
+        Dictionary containing the scalers used for each feature.
     """
+
     def apply_scaling(df, feature):
-        scaler = StandardScaler()
-        train_df = df[df['train']]
+        if constant:
+            scaler = CustomScaler(constant=constant)
+        else:
+            scaler = StandardScaler()
+        train_df = df[df["train"]]
         train_feature = train_df[[feature]]
         scaler.fit(train_feature)
         scaled_features = scaler.transform(df[[feature]])
         df[feature] = scaled_features
-        return df
+        return df, scaler
 
     # Apply scaling to all datasets
+    flag_colums = ["train", "val", "test", "index"]
+    scalers = dict()
     feature_columns = df.columns.tolist()
     for feature in feature_columns:
-        if feature not in (ignore_features + ['index'] + ['train', 'val', 'test']):
-            df = apply_scaling(df, feature)
-    return df
+        if feature not in (ignore_features + flag_colums):
+            df, scaler = apply_scaling(df, feature)
+            scalers[feature] = scaler
+    return df, scalers
+
 
 def aggregate_weather_data(df, column, copy=True):
     """
