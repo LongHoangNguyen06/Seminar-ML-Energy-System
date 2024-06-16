@@ -1,10 +1,11 @@
 import math
 import os
+from pipeline.data import io
 
 import matplotlib.pyplot as plt
 
 
-def plot_df(df, df_name, CONF):
+def plot_df(df, df_name, CONF, date_col=io.DATE_COLUMNS[0], drop_date_cols = io.DATE_COLUMNS):
     """Plot all columns of a DataFrame in separate
     subplots within a single figure and save the plot
     to a directory.
@@ -12,6 +13,8 @@ def plot_df(df, df_name, CONF):
         df (pd.DataFrame): DataFrame to plot.
         df_name (str): Name of the DataFrame.
         CONF (config.Config): Configuration object.
+        date_cols (list, optional): List of date columns. Defaults to io.DATE_COLUMNS.
+        drop_date_cols (list, optional): List of date columns to drop. Defaults to io.DATE_COLUMNS.
     """
     num_columns = (
         len(df.columns) - 2
@@ -20,7 +23,7 @@ def plot_df(df, df_name, CONF):
     ncols = math.ceil(num_columns / nrows)
 
     fig, axes = plt.subplots(
-        nrows=nrows, ncols=ncols, figsize=(20, 10), constrained_layout=True
+        nrows=nrows, ncols=ncols, figsize=(30, 15), constrained_layout=True
     )
     fig.suptitle("Overview of All Columns")
 
@@ -30,15 +33,15 @@ def plot_df(df, df_name, CONF):
     axes = axes.flatten()
 
     # Extract 'Date from' for use as x-axis
-    x_dates = df["Date from"].to_numpy()
+    x_dates = df[date_col].to_numpy()
 
     # Plot each column except 'Date from' and 'Date to'
-    for idx, column in enumerate(df.columns.drop(["Date from", "Date to"])):
+    for idx, column in enumerate(df.columns.drop(drop_date_cols)):
         y_data = df[column].to_numpy()
         ax = axes[idx]
         ax.plot(x_dates,y_data, label=column)
         ax.set_title(column, fontsize=10)
-        ax.set_xlabel("Da   te")
+        ax.set_xlabel("Date")
         ax.set_ylabel("Value")
         ax.legend()
 

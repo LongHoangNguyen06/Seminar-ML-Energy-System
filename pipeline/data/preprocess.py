@@ -74,3 +74,43 @@ def normalize_data(df, ignore_features=list[str]):
         if feature not in (ignore_features + ['index'] + ['train', 'val', 'test']):
             df = apply_scaling(df, feature)
     return df
+
+def aggregate_weather_data(df, column, copy=True):
+    """
+    Aggregate weather data by the specified column.
+    Args
+    ----
+    df : pd.DataFrame
+        DataFrame containing weather data.
+    column : str
+        Column to group by.
+    copy : bool
+        Whether to copy the DataFrame before processing.
+    Returns
+    -------
+    df : pd.DataFrame
+        DataFrame with weather data aggregated by the specified column.
+    """
+    if copy:
+        df = df.copy()
+    aggregations = {
+        "cdir": ["min", "max", "mean"],
+        "z": ["min", "max", "mean"],
+        "msl": ["min", "max", "mean"],
+        "blh": ["min", "max", "mean"],
+        "tcc": ["min", "max", "mean"],
+        "u10": ["min", "max", "mean"],
+        "v10": ["min", "max", "mean"],
+        "t2m": ["min", "max", "mean"],
+        "ssr": ["min", "max", "mean"],
+        "tsr": ["min", "max", "mean"],
+        "sund": ["min", "max", "mean"],
+        "tp": ["min", "max", "mean"],
+        "fsr": ["min", "max", "mean"],
+        "u100": ["min", "max", "mean"],
+        "v100": ["min", "max", "mean"],
+    }
+    df = df.groupby(column).agg(aggregations)
+    df.columns = ["_".join(col).strip() for col in df.columns.values]
+    df.reset_index(inplace=True)
+    return df
