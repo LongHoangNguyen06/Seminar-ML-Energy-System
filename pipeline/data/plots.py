@@ -30,14 +30,15 @@ def plot_df(df, df_name, CONF):
     axes = axes.flatten()
 
     # Extract 'Date from' for use as x-axis
-    x_dates = df["Date from"]
+    x_dates = df["Date from"].to_numpy()
 
     # Plot each column except 'Date from' and 'Date to'
     for idx, column in enumerate(df.columns.drop(["Date from", "Date to"])):
+        y_data = df[column].to_numpy()
         ax = axes[idx]
-        ax.plot(x_dates, df[column], label=column)
+        ax.plot(x_dates,y_data, label=column)
         ax.set_title(column, fontsize=10)
-        ax.set_xlabel("Date")
+        ax.set_xlabel("Da   te")
         ax.set_ylabel("Value")
         ax.legend()
 

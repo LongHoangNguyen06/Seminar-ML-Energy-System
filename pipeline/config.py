@@ -18,3 +18,4 @@ os.makedirs(CONF.data.preprocessed_data_dir, exist_ok=True)
 os.makedirs(CONF.data.preprocessed_data_inspection_dir, exist_ok=True)
 
 CONF.data.na_values = "drop_columns"  # drop_rows, drop_columns, fillna
+CONF.data.inspect = False

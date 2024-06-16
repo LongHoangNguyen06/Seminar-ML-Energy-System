@@ -1,4 +1,7 @@
-def process_na_values(data, CONF):
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+def process_na_values(data: pd.DataFrame, CONF):
     """
     Process missing values in the data.
     Args
@@ -23,3 +26,51 @@ def process_na_values(data, CONF):
         )  # TODO: Implement a more sophisticated way to fill missing values
     assert not data.isnull().values.any()
     return data
+
+# Define a function to split the data
+def split_data(df: pd.DataFrame, column_name: str):
+    """
+    Split the data into train, validation, and test sets based on the year in the specified column.
+    Args
+    ----
+    df : pd.DataFrame
+        Data to split.
+    column_name : str
+        Name of the column containing the date information.
+    Returns
+    -------
+    df : pd.DataFrame
+        Data with additional columns indicating the split.
+    """
+    # Create binary columns for train, val, and test
+    df["train"] = df[column_name].dt.year.isin([2019, 2020])
+    df["val"] = df[column_name].dt.year == 2021
+    df["test"] = df[column_name].dt.year > 2021
+
+    return df
+
+def normalize_data(df, ignore_features=list[str]):
+    """
+    Scale the data using StandardScaler.
+    Args
+    ----
+    df : pd.DataFrame
+        DataFrame to scale.
+    ignore_features : list
+        List of features to ignore during scaling.
+    """
+    def apply_scaling(df, feature):
+        scaler = StandardScaler()
+        train_df = df[df['train']]
+        train_feature = train_df[[feature]]
+        scaler.fit(train_feature)
+        scaled_features = scaler.transform(df[[feature]])
+        df[feature] = scaled_features
+        return df
+
+    # Apply scaling to all datasets
+    feature_columns = df.columns.tolist()
+    for feature in feature_columns:
+        if feature not in (ignore_features + ['index'] + ['train', 'val', 'test']):
+            df = apply_scaling(df, feature)
+    return df

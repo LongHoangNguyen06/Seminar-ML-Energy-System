@@ -1,7 +1,7 @@
 import os
 
 from ydata_profiling import ProfileReport
-
+import pandas as pd
 
 def save_data_inspection(
     Installed_Capacity_Germany,
@@ -111,3 +111,33 @@ def save_data_inspection(
             )
         )
     print(f"Saved {data_type} data inspection successfully.")
+
+def date_range_and_resolution(df: pd.DataFrame, date_columns: list[str]):
+    """
+    Calculate the date range and resolution of the data.
+    Args
+    ----
+    df : pd.DataFrame
+        DataFrame to inspect.
+    date_columns : list
+        List of date columns in the DataFrame.
+    """
+    for date_column in date_columns:
+        # Convert the column to datetime if not already
+        df[date_column] = pd.to_datetime(df[date_column])
+
+        # Calculate minimum and maximum date
+        min_date = df[date_column].min()
+        max_date = df[date_column].max()
+
+        # Calculate differences between consecutive dates and find the most common
+        df_sorted = df.sort_values(by=date_column)
+        df_sorted["date_diff"] = (
+            df_sorted[date_column].diff().dt.total_seconds()
+        )  # this is in seconds
+        resolution = df_sorted["date_diff"].mode()[
+            0
+        ]  # The most common difference in seconds
+        print(f"Min {date_column}: {min_date}")
+        print(f"Max {date_column}: {max_date}")
+        print(f"Resolution {date_column}: {pd.to_timedelta(resolution, unit='s')}")
