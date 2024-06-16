@@ -4,7 +4,7 @@ import os
 from dotmap import DotMap
 
 CONF = DotMap()
-CONF.data.data_dir = "/home/long/Desktop/ml-energy/tmp"
+CONF.data.data_dir = "/graphics/scratch2/students/nguyenlo/seminar-ml"
 CONF.data.raw_data_dir = os.path.join(CONF.data.data_dir, "raw_data")
 CONF.data.raw_inspection_dir = os.path.join(CONF.data.data_dir, "raw_data_inspection")
 CONF.data.preprocessed_data_dir = os.path.join(CONF.data.data_dir, "preprocessed_data")
