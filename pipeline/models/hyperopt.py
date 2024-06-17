@@ -26,11 +26,12 @@ def hyper_parameter_optimize():
             "parameters": {
                 "num_layers": {"min": 1, "max": 6},
                 "num_heads": {"min": 2, "max": 10},
-                "forward_expansion": {"min": 2, "max": 8},
                 "dropout": {"min": 0.0, "max": 0.3},
                 "lag": {"min": 12, "max": 72},
                 "weather_future": {"min": 12, "max": 24},
-                "learning_rate": {"min": 1e-5, "max": 1e-3},
+                "batch_size": {"values": [512, 256, 128, 64]},
+                "lr": {"min": 1e-4, "max": 1e-2},
+                "min_lr": {"min": 1e-8, "max": 1e-5},
             },
         }
     )
@@ -47,11 +48,14 @@ def hyper_parameter_optimize():
             hyperparameters = get_config()
             hyperparameters.model.num_layers = config["num_layers"]
             hyperparameters.model.num_heads = config["num_heads"]
-            hyperparameters.model.forward_expansion = config["forward_expansion"]
+            hyperparameters.model.forward_expansion = config["num_heads"]
             hyperparameters.model.dropout = config["dropout"]
             hyperparameters.model.lag = config["lag"]
             hyperparameters.model.weather_future = config["weather_future"]
-            hyperparameters.model.learning_rate = config["learning_rate"]
+
+            hyperparameters.train.batch_size = config["batch_size"]
+            hyperparameters.train.lr = config["lr"]
+            hyperparameters.train.min_lr = config["min_lr"]
 
             randomseed = 42
             random.seed(randomseed)

@@ -115,9 +115,11 @@ def get_config():
         "supply_Pumped Storage [MW]",
     ]
 
-    # Transformer's architecture's parameters
+    # Transformer's architecture's fixed hyperparameters
     CONF.model.num_targets = len(CONF.model.targets)
     CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
+
+    # Transformer's architecture's tunable hyperparameters
     CONF.model.num_layers = 1
     CONF.model.num_heads = 2
     CONF.model.forward_expansion = 2
@@ -125,11 +127,13 @@ def get_config():
     CONF.model.lag = 24
     CONF.model.weather_future = 24
 
-    # Training
+    # Training tunable hyperparameters
     CONF.train.batch_size = 512
-    CONF.train.epochs = 100
     CONF.train.lr = 0.0001
     CONF.train.min_lr = 0.00001
+
+    # Fixed hyper parameters
+    CONF.train.epochs = 100
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 100
     CONF.train.do_train = True
