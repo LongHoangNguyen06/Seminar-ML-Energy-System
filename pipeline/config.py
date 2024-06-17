@@ -27,32 +27,16 @@ CONF.data.plot = False  # False to make faster
 
 # Model configuration for 1 hour forecasting
 CONF.model.horizons = [1]  # [1, 24]
+
+# Testing
+CONF.model.save_path = os.path.join(CONF.data.data_dir, "models")
+os.makedirs(CONF.train.save_path, exist_ok=True)
+CONF.model.model_path = os.path.join(CONF.model.save_path, "best_model.pth")
+
+# Time series hyper parameters
 CONF.model.lag = 24
 CONF.model.weather_future = 24
-
-# General configuration
-CONF.model.ignore_columns = [
-    "Date from",
-    "Date to",
-    "train",
-    "val",
-    "test",
-    "weather_forecast_origin",
-]
 CONF.model.features = [
-    "prices_Germany/Luxembourg [€/MWh]",
-    "prices_Belgium [€/MWh]",
-    "prices_Denmark 1 [€/MWh]",
-    "prices_Denmark 2 [€/MWh]",
-    "prices_France [€/MWh]",
-    "prices_Netherlands [€/MWh]",
-    "prices_Norway 2 [€/MWh]",
-    "prices_Austria [€/MWh]",
-    "prices_Sweden 4 [€/MWh]",
-    "prices_Switzerland [€/MWh]",
-    "prices_Czech Republic [€/MWh]",
-    "prices_Italy (North) [€/MWh]",
-    "prices_Slovenia [€/MWh]",
     "capacity_Biomass [MW]",
     "capacity_Hydro Power [MW]",
     "capacity_Wind Offshore [MW] ",
@@ -126,18 +110,15 @@ CONF.model.targets = [
 
 # Transformer's architecture's parameters
 CONF.model.num_targets = len(CONF.model.targets)
-CONF.model.num_features = len(CONF.model.features)
+CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
 CONF.model.num_layers = 1
 CONF.model.num_heads = 2
 CONF.model.forward_expansion = 2
 CONF.model.dropout = 0.1
 
 # Training
-CONF.train.batch_size = 128
+CONF.train.batch_size = 512
 CONF.train.epochs = 100
 CONF.train.lr = 0.0001
+CONF.train.min_lr = 0.00001
 CONF.train.do_train = True
-CONF.train.save_path = "model.pth"
-
-# Testing
-CONF.testing.model_path = "model.pth"
