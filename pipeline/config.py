@@ -18,7 +18,12 @@ os.makedirs(CONF.data.preprocessed_data_dir, exist_ok=True)
 os.makedirs(CONF.data.preprocessed_data_inspection_dir, exist_ok=True)
 
 CONF.data.na_values = "drop_columns"  # drop_rows, drop_columns, fillna
-CONF.data.inspect = False
+CONF.data.inspect = False  # False to make faster
 CONF.data.process_raw_data = True
 CONF.data.price_normalization_constant = 10000.0  # euro/MWh
-CONF.data.loaded_raw_data = False
+CONF.data.loaded_raw_data = False  # Don't change this
+CONF.data.normalize_data = True
+CONF.data.plot = True  # False to make faster
+
+# Model configuration for 1 hour forecasting
+CONF.model.supply1.lag = 24  # hours

@@ -152,3 +152,113 @@ def aggregate_weather_data(df, column, copy=True):
     df.columns = ["_".join(col).strip() for col in df.columns.values]
     df.reset_index(inplace=True)
     return df
+
+
+def patch_time_saving(df: pd.DataFrame):
+    """
+    Patch the data to removing time shifting problems...
+    Args
+    ----
+    df : pd.DataFrame
+        DataFrame to patch.
+    Returns
+    -------
+    df : pd.DataFrame
+        Patched DataFrame.
+    """
+
+    def prepare_data(df):
+        before = len(df)
+        # Drop duplicates and sort to prevent issues in dropping non-ascending rows
+        df = df.drop_duplicates().sort_values(by=["Date from", "Date to"])
+        # Drop rows where 'Date from' or 'Date to' is not greater than the previous row
+        df = df[df["Date from"].diff().dt.total_seconds() > 0]
+        df = df[df["Date to"].diff().dt.total_seconds() > 0]
+        after = len(df)
+        print(f"Removed {before - after} rows")
+        return df
+
+    def create_full_time_df(df, start_date, end_date, time_delta):
+        """
+        Creates a DataFrame with a complete time range from start_date to end_date, initializing columns
+        based on an input DataFrame.
+
+        Args:
+        df : pd.DataFrame
+            The input DataFrame from which to derive the column structure.
+        start_date : str
+            The start date of the time range.
+        end_date : str
+            The end date of the fort columns.
+        time_delta : str
+            The frequency of the time range (e.g., '1H' for one hour).
+
+        Returns:
+        pd.DataFrame
+            A new DataFrame with the specified time range and columns initialized.
+        """
+        # Create the date range for the full time DataFrame
+        date_range = pd.date_range(start=start_date, end=end_date, freq=time_delta)
+
+        # Initialize the DataFrame with date columns
+        df_full = pd.DataFrame(
+            {"Date from": date_range[:-1], "Date to": date_range[1:]}
+        )
+
+        # Initialize other columns based on the input DataFrame
+        for column in df.columns:
+            if column not in ["Date from", "Date to"]:
+                df_full[column] = (
+                    pd.NA
+                )  # Initialize with pandas NA for appropriate handling of missing types
+        return df_full
+
+    def merge_and_fill(df1, df2):
+        """
+        Merges two DataFrames based on 'Date from' and 'Date to' columns and applies forward
+        filling to handle missing values.
+        Ensures that `df2` maintains its structure, only updating with data from `df1` where dates match.
+
+        Args:
+        df1 (pd.DataFrame): Source DataFrame with observed data.
+        df2 (pd.DataFrame): Target DataFrame with a predefined time interval and initialized columns.
+
+        Returns:
+        pd.DataFrame: Updated version of `df2` with missing values filled from `df1`.
+
+        Details:
+        - Performs a left join to keep all rows in `df2` and updates its data from `df1` where
+        their 'Date from' and 'Date to' match.
+        - Forward fills missing values in `df2` to ensure no data gaps.
+        """
+        df1 = df1.copy()
+        df2 = df2.copy()
+        df1["Date from"] = pd.to_datetime(df1["Date from"])
+        df1["Date to"] = pd.to_datetime(df1["Date to"])
+        df2["Date from"] = pd.to_datetime(df2["Date from"])
+        df2["Date to"] = pd.to_datetime(df2["Date to"])
+
+        # Merge with an indicator to track where data came from
+        merged_df = df2.merge(
+            df1, on=["Date from", "Date to"], how="left", suffixes=("", "_from_df1")
+        )
+
+        # Update df2 columns with df1 where available
+        for col in df1.columns:
+            if col not in ["Date from", "Date to"]:  # Avoid key columns
+                # Use data from df1 if available, otherwise retain df2 data
+                merged_df[col] = merged_df[col + "_from_df1"]
+                merged_df.drop(col + "_from_df1", axis=1, inplace=True)
+        merged_df.ffill(inplace=True)
+        merged_df.bfill(inplace=True)
+        return merged_df
+
+    ########################################################
+    # Patch the data to removing time shifting problems...
+    ########################################################
+    df1 = prepare_data(df)
+    df2 = create_full_time_df(df, "2019-01-01 00:00:00", "2023-01-01 00:00:00", "1H")
+    df = merge_and_fill(df1, df2)
+
+    df = df[df["Date to"] != df["Date to"].max()]
+    return df

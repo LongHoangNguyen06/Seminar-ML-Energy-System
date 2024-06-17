@@ -1,11 +1,20 @@
 import math
 import os
-from pipeline.data import io
 
 import matplotlib.pyplot as plt
 
+from pipeline.data import io
 
-def plot_df(df, df_name, CONF, date_col=io.DATE_COLUMNS[0], drop_date_cols = io.DATE_COLUMNS):
+
+def plot_df(
+    df,
+    df_name,
+    CONF,
+    date_col=io.DATE_COLUMNS[0],
+    drop_date_cols=io.DATE_COLUMNS,
+    processed_data=True,
+    figsize=(30, 15),
+):
     """Plot all columns of a DataFrame in separate
     subplots within a single figure and save the plot
     to a directory.
@@ -15,6 +24,7 @@ def plot_df(df, df_name, CONF, date_col=io.DATE_COLUMNS[0], drop_date_cols = io.
         CONF (config.Config): Configuration object.
         date_cols (list, optional): List of date columns. Defaults to io.DATE_COLUMNS.
         drop_date_cols (list, optional): List of date columns to drop. Defaults to io.DATE_COLUMNS.
+        processed_data (bool, optional): Whether the data is processed. Defaults to True.
     """
     num_columns = (
         len(df.columns) - 2
@@ -23,11 +33,14 @@ def plot_df(df, df_name, CONF, date_col=io.DATE_COLUMNS[0], drop_date_cols = io.
     ncols = math.ceil(num_columns / nrows)
 
     fig, axes = plt.subplots(
-        nrows=nrows, ncols=ncols, figsize=(30, 15), constrained_layout=True
+        nrows=nrows, ncols=ncols, figsize=figsize, constrained_layout=True
     )
     fig.suptitle("Overview of All Columns")
 
-    plot_dir = os.path.join(CONF.data.data_dir, "processed_data_figures")
+    if processed_data:
+        plot_dir = os.path.join(CONF.data.data_dir, "processed_data_figures")
+    else:
+        plot_dir = os.path.join(CONF.data.data_dir, "raw_data_figures")
     os.makedirs(plot_dir, exist_ok=True)
 
     axes = axes.flatten()
@@ -39,7 +52,7 @@ def plot_df(df, df_name, CONF, date_col=io.DATE_COLUMNS[0], drop_date_cols = io.
     for idx, column in enumerate(df.columns.drop(drop_date_cols)):
         y_data = df[column].to_numpy()
         ax = axes[idx]
-        ax.plot(x_dates,y_data, label=column)
+        ax.plot(x_dates, y_data, label=column)
         ax.set_title(column, fontsize=10)
         ax.set_xlabel("Date")
         ax.set_ylabel("Value")

@@ -1,7 +1,11 @@
 import os
 
-from ydata_profiling import ProfileReport
+import numpy as np
 import pandas as pd
+from ydata_profiling import ProfileReport
+
+from pipeline.data import io
+
 
 def save_data_inspection(
     Installed_Capacity_Germany,
@@ -112,7 +116,10 @@ def save_data_inspection(
         )
     print(f"Saved {data_type} data inspection successfully.")
 
-def date_range_and_resolution(df: pd.DataFrame, date_columns: list[str]):
+
+def date_range_and_resolution(
+    df: pd.DataFrame, date_columns: list[str], expected_time_delta: str = None
+):
     """
     Calculate the date range and resolution of the data.
     Args
@@ -121,7 +128,11 @@ def date_range_and_resolution(df: pd.DataFrame, date_columns: list[str]):
         DataFrame to inspect.
     date_columns : list
         List of date columns in the DataFrame.
+    expected_time_delta : str
+        The expected time difference between consecutive dates, specified as a
+        pandas timedelta string (e.g., '1H', '30T').
     """
+
     for date_column in date_columns:
         # Convert the column to datetime if not already
         df[date_column] = pd.to_datetime(df[date_column])
@@ -131,13 +142,71 @@ def date_range_and_resolution(df: pd.DataFrame, date_columns: list[str]):
         max_date = df[date_column].max()
 
         # Calculate differences between consecutive dates and find the most common
-        df_sorted = df.sort_values(by=date_column)
-        df_sorted["date_diff"] = (
-            df_sorted[date_column].diff().dt.total_seconds()
-        )  # this is in seconds
-        resolution = df_sorted["date_diff"].mode()[
-            0
-        ]  # The most common difference in seconds
+        date_diff = df[date_column].diff().dt.total_seconds()  # this is in seconds
+        resolution = date_diff.mode()[0]  # The most common difference in seconds
         print(f"Min {date_column}: {min_date}")
         print(f"Max {date_column}: {max_date}")
         print(f"Resolution {date_column}: {pd.to_timedelta(resolution, unit='s')}")
+        print(
+            f"Total number of rows in the DataFrame: {len(df)}"
+        )  # Print the total number of rows
+
+        # Calculate and analyze differences between consecutive dates
+        df = df.sort_values(by=date_column)
+        date_diff = df[date_column].diff().dt.total_seconds()
+
+        # Check for monotonic increase
+        if not df[date_column].is_monotonic_increasing:
+            print(f"Warning: {date_column} is not strictly monotonically increasing.")
+
+        if expected_time_delta:
+            expected_delta_seconds = pd.to_timedelta(
+                expected_time_delta
+            ).total_seconds()
+            # Check if all time deltas match the expected time delta
+            if not all(date_diff.dropna() == expected_delta_seconds):
+                print(
+                    f"Warning: Time delta in {date_column} not match {expected_delta_seconds}s."
+                )
+                diff = (
+                    df["Date to"].diff().dt.total_seconds().dropna()
+                    / expected_delta_seconds
+                )
+                print(np.where(diff != 1.0)[0])
+
+
+def date_range_and_resolution_dfs(
+    Installed_Capacity_Germany,
+    Prices_Europe,
+    Realised_Supply_Germany,
+    Realised_Demand_Germany,
+    Weather_Data_Germany,
+    processed=False,
+):
+    print("# Installed Capacity Germany")
+    date_range_and_resolution(Installed_Capacity_Germany, io.DATE_COLUMNS)
+    print("\n")
+
+    print("# Prices Europe")
+    if processed:
+        date_range_and_resolution(Prices_Europe, io.DATE_COLUMNS, "1h")
+    else:
+        date_range_and_resolution(Prices_Europe, io.DATE_COLUMNS, "1h")
+    print("\n")
+
+    print("# Realised Supply Germany")
+    if processed:
+        date_range_and_resolution(Realised_Supply_Germany, io.DATE_COLUMNS, "1h")
+    else:
+        date_range_and_resolution(Realised_Supply_Germany, io.DATE_COLUMNS, "15m")
+    print("\n")
+
+    print("# Realised Demand Germany")
+    if processed:
+        date_range_and_resolution(Realised_Demand_Germany, io.DATE_COLUMNS, "1h")
+    else:
+        date_range_and_resolution(Realised_Demand_Germany, io.DATE_COLUMNS, "15m")
+    print("\n")
+
+    print("# Weather Data Germany")
+    date_range_and_resolution(Weather_Data_Germany, io.DATE_COLUMNS_WEATHER[1:])

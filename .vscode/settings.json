@@ -1,5 +1,8 @@
 {
     "files.exclude": {
-        "**/__pycache__": true
+        "**/__pycache__": true,
+        "venv": true,
+        ".pre-commit-config.yaml": true,
+        "matplotlib_style.txt": true,
     }
 }
