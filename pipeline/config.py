@@ -27,7 +27,6 @@ CONF.data.plot = False  # False to make faster
 
 # Model configuration for 1 hour forecasting
 CONF.model.horizons = [1, 24]
-CONF.model.batch_size = 32
 CONF.model.lag = 24 * 7
 
 # General configuration
@@ -125,15 +124,16 @@ CONF.model.targets = [
 ]
 
 # Transformer's architecture's parameters
+CONF.model.num_targets = len(CONF.model.targets)
 CONF.model.num_features = len(CONF.model.features)
 CONF.model.num_layers = 3
 CONF.model.num_heads = 8
-CONF.model.forward_expansion = 4
+CONF.model.forward_expansion = 8
 CONF.model.dropout = 0.1
-d_model = num_features * forward_expansion
 
 # Training
-CONF.training.epochs = 100
+CONF.train.batch_size = 128
+CONF.train.epochs = 100
 CONF.train.lr = 0.0001
 CONF.train.do_train = True
 CONF.train.save_path = "model.pth"
