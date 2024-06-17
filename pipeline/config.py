@@ -26,10 +26,9 @@ CONF.data.normalize_data = True
 CONF.data.plot = False  # False to make faster
 
 # Model configuration for 1 hour forecasting
-CONF.model.horizon = 24
+CONF.model.horizons = [1, 24]
 CONF.model.batch_size = 32
-CONF.model.supply1.lag = 24  # hours
-CONF.model.supply24.lag = 24 * 7  # hours
+CONF.model.lag = 24 * 7
 
 # General configuration
 CONF.model.ignore_columns = [
@@ -124,4 +123,20 @@ CONF.model.targets = [
     "supply_Other Renewable [MW]",
     "supply_Pumped Storage [MW]",
 ]
-CONF.model.device = "cuda"  # cuda or cpu
+
+# Transformer's architecture's parameters
+CONF.model.num_features = len(CONF.model.features)
+CONF.model.num_layers = 3
+CONF.model.num_heads = 8
+CONF.model.forward_expansion = 4
+CONF.model.dropout = 0.1
+d_model = num_features * forward_expansion
+
+# Training
+CONF.training.epochs = 100
+CONF.train.lr = 0.0001
+CONF.train.do_train = True
+CONF.train.save_path = "model.pth"
+
+# Testing
+CONF.testing.model_path = "model.pth"
