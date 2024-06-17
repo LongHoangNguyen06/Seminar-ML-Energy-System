@@ -33,7 +33,7 @@ def get_config():
     CONF.data.plot = False  # False to make faster
 
     # Model configuration for 1 hour forecasting
-    CONF.model.horizons = [1]  # [1, 24]
+    CONF.model.horizons = [1, 24]
 
     # Testing
     CONF.model.save_path = os.path.join(CONF.data.data_dir, "models")
@@ -118,11 +118,11 @@ def get_config():
     # Transformer's architecture's fixed hyperparameters
     CONF.model.num_targets = len(CONF.model.targets)
     CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
+    CONF.model.forward_expansion = 2
 
     # Transformer's architecture's tunable hyperparameters
     CONF.model.num_layers = 1
     CONF.model.num_heads = 2
-    CONF.model.forward_expansion = 2
     CONF.model.dropout = 0.1
     CONF.model.lag = 24
     CONF.model.weather_future = 24
