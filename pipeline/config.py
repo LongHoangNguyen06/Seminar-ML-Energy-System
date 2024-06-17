@@ -26,8 +26,9 @@ CONF.data.normalize_data = True
 CONF.data.plot = False  # False to make faster
 
 # Model configuration for 1 hour forecasting
-CONF.model.horizons = [1, 24]
-CONF.model.lag = 24 * 7
+CONF.model.horizons = [1]  # [1, 24]
+CONF.model.lag = 24
+CONF.model.weather_future = 24
 
 # General configuration
 CONF.model.ignore_columns = [
@@ -126,9 +127,9 @@ CONF.model.targets = [
 # Transformer's architecture's parameters
 CONF.model.num_targets = len(CONF.model.targets)
 CONF.model.num_features = len(CONF.model.features)
-CONF.model.num_layers = 3
-CONF.model.num_heads = 8
-CONF.model.forward_expansion = 8
+CONF.model.num_layers = 1
+CONF.model.num_heads = 2
+CONF.model.forward_expansion = 2
 CONF.model.dropout = 0.1
 
 # Training
