@@ -37,9 +37,11 @@ def get_config():
 
     # Testing
     CONF.model.save_path = os.path.join(CONF.data.data_dir, "models")
-    CONF.model.best_model_path = os.path.join(CONF.model.save_path, "best_model.pth")
-    CONF.model.best_hyperparameters_path = os.path.join(
-        CONF.model.save_path, "best_hyperparameters.pkl"
+    CONF.model.best_model_path = os.path.join(
+        CONF.model.save_path, "run_1", "model.pth"
+    )
+    CONF.model.best_hyperparameter_path = os.path.join(
+        CONF.model.save_path, "run_1", "hyperparameters.pth"
     )
 
     # Time series hyper parameters
@@ -136,8 +138,8 @@ def get_config():
     CONF.train.epochs = 100
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 100
-    CONF.train.do_train = True
-    CONF.test.do_test = False
+    CONF.train.do_train = False
+    CONF.test.do_test = True
     return CONF
 
 

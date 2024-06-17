@@ -1,4 +1,5 @@
 import os
+import pickle
 
 import torch
 from torch.optim import Adam
@@ -53,8 +54,10 @@ def train_loop(hyperparameters, df, train_id):
     Main training loop for the TimeSeriesTransformer model.
     """
     experiment_path = os.path.join(hyperparameters.model.save_path, f"run_{train_id}")
-    model_path = os.path.join(experiment_path, f"model_{train_id}.pth")
+    model_path = os.path.join(experiment_path, "model.pth")
+    hyperparameters_path = os.path.join(experiment_path, "hyperparameters.pth")
     os.makedirs(experiment_path, exist_ok=True)
+    pickle.dump(hyperparameters, open(hyperparameters_path, "wb"))
     # Initialize data
     train_df = df[df["train"]].reset_index()
     val_df = df[df["val"]].reset_index()
