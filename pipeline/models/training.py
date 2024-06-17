@@ -54,7 +54,7 @@ def train_loop(hyperparameters, df, train_id):
     """
     experiment_path = os.path.join(hyperparameters.model.save_path, f"run_{train_id}")
     model_path = os.path.join(experiment_path, f"model_{train_id}.pth")
-    os.mkdir(experiment_path, exist_ok=True)
+    os.makedirs(experiment_path, exist_ok=True)
     # Initialize data
     train_df = df[df["train"]].reset_index()
     val_df = df[df["val"]].reset_index()

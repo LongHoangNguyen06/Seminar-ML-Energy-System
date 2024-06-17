@@ -66,7 +66,6 @@ def hyper_parameter_optimize():
             torch.backends.cudnn.benchmark = False
             torch.backends.cudnn.deterministic = True
             training.train_loop(hyperparameters, df, train_id=train_id)
-            wandb.finish()
 
     wandb.agent(
         sweep_id, exception_handling_train, count=CONF.train.hyperparameters_iters
