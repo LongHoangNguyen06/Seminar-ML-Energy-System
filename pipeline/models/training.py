@@ -49,7 +49,9 @@ def validate(model, val_loader, criterion):
     return total_loss / len(val_loader)
 
 
-def train_loop(hyperparameters, df, train_id, merge_train_val: bool = False):
+def train_loop(
+    hyperparameters, df, train_id, merge_train_val: bool = False, log_wandb: bool = True
+):
     """
     Main training loop for the TimeSeriesTransformer model.
     Args:
@@ -113,7 +115,7 @@ def train_loop(hyperparameters, df, train_id, merge_train_val: bool = False):
             best_val_loss = val_loss
             torch.save(model.state_dict(), model_path)
 
-    if wandb.run is not None:
+    if log_wandb:
         wandb.log(
             {
                 "train_loss": train_loss,
