@@ -76,4 +76,6 @@ class TimeSeriesTransformer(nn.Module):
         pooled_transformed = transformed.mean(dim=0)
 
         # Forecast
-        return torch.stack([fc(pooled_transformed) for fc in self.fc_out], dim=1)
+        return nn.ReLU()(
+            torch.stack([fc(pooled_transformed) for fc in self.fc_out], dim=1)
+        )
