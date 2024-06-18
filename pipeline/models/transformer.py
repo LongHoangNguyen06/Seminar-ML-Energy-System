@@ -71,7 +71,11 @@ class TimeSeriesTransformer(nn.Module):
         src = self.positional_encoder(src)
         transformed = self.transformer_encoder(src)
 
-        last_output = transformed[-1]  # Use only the last output for forecasting
+        # Use all tokens for forecasting, potentially averaging their representations
+        # or using another method to combine information across all tokens
+        outputs = [
+            fc(transformed.mean(dim=0)) for fc in self.fc_out
+        ]  # Example: mean pooling
 
-        outputs = [fc(last_output) for fc in self.fc_out]
+        outputs = [fc(outputs) for fc in self.fc_out]
         return torch.stack(outputs, dim=1)
