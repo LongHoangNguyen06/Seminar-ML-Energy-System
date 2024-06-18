@@ -12,12 +12,15 @@ from pipeline.config import CONF, get_config
 from pipeline.models import training
 
 os.environ["WANDB_TIMEOUT"] = "300"
+PROJECT_NAME = "Seminar ML for Renewable Energy System"
+ENTITY_NAME = "Seminar ML for Renewable Energy System"
+SWEEP_NAME = "Multitask supply only 1h, 24h"
 
 
 def exception_handling_train(df):
     with wandb.init(
-        project="Seminar ML for Renewable Energy System",
-        entity="Seminar ML for Renewable Energy System",
+        project=PROJECT_NAME,
+        entity=ENTITY_NAME,
     ) as run:
         train_id = run.id  # Using the WandB run ID as train_id
         config = run.config  # Retrieve the configuration for this run
@@ -56,8 +59,8 @@ def hyper_parameter_optimize(sweep_id=None):
     if sweep_id is None:
         sweep_id = wandb.sweep(
             {
-                "project": "Seminar ML for Renewable Energy System",
-                "name": "Multitask supply only 1h, 24h",
+                "project": PROJECT_NAME,
+                "name": SWEEP_NAME,
                 "method": "bayes",  # Adjust search method as needed (grid, random)
                 "metric": {
                     "goal": "minimize",  # Specify optimization goal (minimize/maximize)
@@ -81,12 +84,14 @@ def hyper_parameter_optimize(sweep_id=None):
         sweep_id,
         lambda: exception_handling_train(df),
         count=CONF.train.hyperparameters_iters,
+        project=PROJECT_NAME,
     )
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         sweep_id = sys.argv[1]
+        print(f"Starting new agent for sweep {sweep_id}")
         hyper_parameter_optimize(sweep_id)
     else:
         hyper_parameter_optimize()
