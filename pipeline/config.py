@@ -7,6 +7,20 @@ from dotmap import DotMap
 
 def get_config():
     CONF = DotMap()
+    # Fixed variables, don'T change
+    CONF.data.loaded_raw_data = False  # Don't change this
+
+    # Pipeline configuration
+    CONF.pipeline.process_raw_data = False
+    CONF.pipeline.normalize_data = True
+    CONF.pipeline.data_test = False
+    CONF.pipeline.do_hyperopt = False
+    CONF.pipeline.do_final_train = False
+    CONF.pipeline.do_test = True
+    CONF.pipeline.plot = False  # False to make faster
+    CONF.pipeline.inspect = False  # False to make faster
+
+    # Data directory configuration
     CONF.data.data_dir = "/graphics/scratch2/students/nguyenlo/seminar-ml"
     CONF.data.raw_data_dir = os.path.join(CONF.data.data_dir, "raw_data")
     CONF.data.raw_inspection_dir = os.path.join(
@@ -18,26 +32,21 @@ def get_config():
     CONF.data.preprocessed_data_inspection_dir = os.path.join(
         CONF.data.data_dir, "preprocessed_data_inspection"
     )
-
     os.makedirs(CONF.data.raw_data_dir, exist_ok=True)
     os.makedirs(CONF.data.raw_inspection_dir, exist_ok=True)
     os.makedirs(CONF.data.preprocessed_data_dir, exist_ok=True)
     os.makedirs(CONF.data.preprocessed_data_inspection_dir, exist_ok=True)
 
+    # Data preprocessing configuration
     CONF.data.na_values = "drop_columns"  # drop_rows, drop_columns, fillna
-    CONF.data.inspect = False  # False to make faster
-    CONF.data.process_raw_data = False
     CONF.data.price_normalization_constant = 10000.0  # euro/MWh
-    CONF.data.loaded_raw_data = False  # Don't change this
-    CONF.data.normalize_data = True
-    CONF.data.plot = False  # False to make faster
 
-    # Model configuration for 1 hour forecasting
+    # Time series prediction configuration
     CONF.model.horizons = [1, 24]
 
-    # Testing
+    # Save paths configuration
     CONF.model.save_path = os.path.join(CONF.data.data_dir, "models")
-    CONF.model.best_model_path = os.path.join(
+    CONF.model.final_model_path = os.path.join(
         CONF.model.save_path, "run_9", "model.pth"
     )
     CONF.model.best_hyperparameter_path = os.path.join(
@@ -138,8 +147,6 @@ def get_config():
     CONF.train.epochs = 100
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 100
-    CONF.train.do_train = False
-    CONF.test.do_test = True
     return CONF
 
 

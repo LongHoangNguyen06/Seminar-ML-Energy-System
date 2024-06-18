@@ -49,9 +49,21 @@ def validate(model, val_loader, criterion):
     return total_loss / len(val_loader)
 
 
-def train_loop(hyperparameters, df, train_id):
+def train_loop(hyperparameters, df, train_id, merge_train_val: bool = False):
     """
     Main training loop for the TimeSeriesTransformer model.
+    Args:
+    hyperparameters : DotMap
+        Configuration object.
+    df : pd.DataFrame
+        Dataframe containing the time series data.
+    train_id : int
+        Unique identifier for the training run.
+    merge_train_val : bool
+        Whether to merge the training and validation sets.
+    Returns:
+        best_val_loss : float
+            Best validation loss achieved during training.
     """
     experiment_path = os.path.join(hyperparameters.model.save_path, f"run_{train_id}")
     model_path = os.path.join(experiment_path, "model.pth")
@@ -59,8 +71,12 @@ def train_loop(hyperparameters, df, train_id):
     os.makedirs(experiment_path, exist_ok=True)
     pickle.dump(hyperparameters, open(hyperparameters_path, "wb"))
     # Initialize data
-    train_df = df[df["train"]].reset_index()
-    val_df = df[df["val"]].reset_index()
+    if merge_train_val:
+        train_df = df[df["train"] | df["val"]].reset_index(drop=True)
+        val_df = df[df["val"]].reset_index(drop=True)
+    else:
+        train_df = df[df["train"]].reset_index(drop=True)
+        val_df = df[df["val"]].reset_index(drop=True)
 
     train_dataset = TimeSeriesDataset(train_df, hyperparameters=hyperparameters)
     val_dataset = TimeSeriesDataset(val_df, hyperparameters=hyperparameters)

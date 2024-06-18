@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
 
+from pipeline.data import io
+
 
 class CustomScaler(BaseEstimator, TransformerMixin):
     def __init__(self, constant=1):
@@ -262,3 +264,65 @@ def patch_time_saving(df: pd.DataFrame):
 
     df = df[df["Date to"] != df["Date to"].max()]
     return df
+
+
+def german2greenwich(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Convert the German time to Greenwich time.
+    Args
+    ----
+    df : pd.DataFrame
+        DataFrame containing the German time.
+    Returns
+    -------
+    df : pd.DataFrame
+        DataFrame with the Greenwich time.
+    """
+    df["Date from"] = (
+        df["Date from"]
+        .dt.tz_localize("Europe/Berlin", ambiguous="NaT")
+        .dt.tz_convert("GMT")
+        .dt.tz_localize(None)
+    )
+    df["Date to"] = (
+        df["Date to"]
+        .dt.tz_localize("Europe/Berlin", ambiguous="NaT")
+        .dt.tz_convert("GMT")
+        .dt.tz_localize(None)
+    )
+    return df
+
+
+def split_dfs(
+    Processed_Installed_Capacity_Germany: pd.DataFrame,
+    Processed_Prices_Europe: pd.DataFrame,
+    Processed_Realised_Supply_Germany: pd.DataFrame,
+    Processed_Realised_Demand_Germany: pd.DataFrame,
+    Processed_Weather_Data_Germany: pd.DataFrame,
+) -> None:
+    Processed_Installed_Capacity_Germany = split_data(
+        df=Processed_Installed_Capacity_Germany, column_name=io.DATE_COLUMNS[-1]
+    )
+    Processed_Prices_Europe = split_data(
+        df=Processed_Prices_Europe, column_name=io.DATE_COLUMNS[-1]
+    )
+    Processed_Realised_Supply_Germany = split_data(
+        df=Processed_Realised_Supply_Germany, column_name=io.DATE_COLUMNS[-1]
+    )
+    Processed_Realised_Demand_Germany = split_data(
+        df=Processed_Realised_Demand_Germany, column_name=io.DATE_COLUMNS[-1]
+    )
+    Processed_Weather_Data_Germany = split_data(
+        df=Processed_Weather_Data_Germany, column_name=io.DATE_COLUMNS_WEATHER[0]
+    )
+    return (
+        Processed_Installed_Capacity_Germany,
+        Processed_Prices_Europe,
+        Processed_Realised_Supply_Germany,
+        Processed_Realised_Demand_Germany,
+        Processed_Weather_Data_Germany,
+    )
+
+
+def remove_train_val_test_cols(df) -> pd.DataFrame:
+    return df.drop(columns=["train", "val", "test"], axis=1)
