@@ -31,7 +31,7 @@ def hyper_parameter_optimize(sweep_id=None):
                     "dropout": {"min": 0.0, "max": 0.4},
                     "lag": {"min": 12, "max": 168},
                     "weather_future": {"min": 12, "max": 24},
-                    "dim_feedforward_factor": {"min": 0.5, "max": 4.0},
+                    "dim_feedforward_factor": {"values": [0.5, 1.0, 2.0, 4.0]},
                     "batch_size": {"values": [1024, 512, 256, 128]},
                     "lr": {"min": 1e-4, "max": 1e-1},
                     "min_lr": {"min": 1e-8, "max": 1e-5},

@@ -24,7 +24,7 @@ class PositionalEncoding(nn.Module):
 
 class TimeSeriesTransformer(nn.Module):
     def __init__(self, hyperparameters):
-        super(TimeSeriesTransformer, self).__init__()
+        super().__init__()
         d_model = hyperparameters.model.num_features * hyperparameters.model.num_heads
         self.output_horizons = hyperparameters.model.horizons
 
@@ -61,17 +61,19 @@ class TimeSeriesTransformer(nn.Module):
         src = src.permute(
             1, 0, 2
         )  # Permute to (sequence_length, batch_size, num_features)
+
         src = self.feature_to_embedding(
             src
         )  # Map features to the higher dimensional space
+
+        # Apply positional encoding
         src = self.positional_encoder(src)
+
+        # Apply transformer encoder
         transformed = self.transformer_encoder(src)
 
-        # Use all tokens for forecasting, potentially averaging their representations
-        # or using another method to combine information across all tokens
-        outputs = [
-            fc(transformed.mean(dim=0)) for fc in self.fc_out
-        ]  # Example: mean pooling
+        # Use all tokens for forecasting
+        pooled_transformed = transformed.mean(dim=0)
 
-        outputs = [fc(outputs) for fc in self.fc_out]
-        return torch.stack(outputs, dim=1)
+        # Forecast
+        return torch.stack([fc(pooled_transformed) for fc in self.fc_out], dim=1)

@@ -11,12 +11,14 @@ def get_config():
     CONF.data.loaded_raw_data = False  # Don't change this
 
     # Pipeline configuration
-    CONF.pipeline.process_raw_data = False
+    CONF.pipeline.process_raw_data = True
     CONF.pipeline.normalize_data = True
+    CONF.pipeline.feature_selection = True
     CONF.pipeline.data_test = False
+    CONF.pipeline.do_test_run_training = True
     CONF.pipeline.do_hyperopt = False
     CONF.pipeline.do_final_train = False
-    CONF.pipeline.do_test = True
+    CONF.pipeline.do_test = False
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
 
