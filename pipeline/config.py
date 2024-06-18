@@ -38,10 +38,10 @@ def get_config():
     # Testing
     CONF.model.save_path = os.path.join(CONF.data.data_dir, "models")
     CONF.model.best_model_path = os.path.join(
-        CONF.model.save_path, "run_1", "model.pth"
+        CONF.model.save_path, "run_9", "model.pth"
     )
     CONF.model.best_hyperparameter_path = os.path.join(
-        CONF.model.save_path, "run_1", "hyperparameters.pth"
+        CONF.model.save_path, "run_9", "hyperparameters.pth"
     )
 
     # Time series hyper parameters
