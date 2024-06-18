@@ -67,8 +67,8 @@ def hyper_parameter_optimize(sweep_id=None):
                     "name": "best_val_loss",  # Replace with the metric you want to optimize
                 },
                 "parameters": {
-                    "num_layers": {"values": list(range(2, 13, 2))},
-                    "num_heads": {"values": list(range(2, 17, 2))},
+                    "num_layers": {"values": list(range(2, 8, 2))},
+                    "num_heads": {"values": list(range(2, 11, 2))},
                     "dropout": {"min": 0.0, "max": 0.4},
                     "lag": {"min": 12, "max": 48},
                     "weather_future": {"min": 12, "max": 24},
