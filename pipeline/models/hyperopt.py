@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import traceback
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,43 @@ from pipeline.config import CONF, get_config
 from pipeline.models import training
 
 os.environ["WANDB_TIMEOUT"] = "300"
+
+
+def exception_handling_train(df):
+    with wandb.init(
+        project="Seminar ML for Renewable Energy System",
+        entity="Seminar ML for Renewable Energy System",
+    ) as run:
+        train_id = run.id  # Using the WandB run ID as train_id
+        config = run.config  # Retrieve the configuration for this run
+
+        hyperparameters = get_config()
+        hyperparameters.model.num_layers = config["num_layers"]
+        hyperparameters.model.num_heads = config["num_heads"]
+        hyperparameters.model.dropout = config["dropout"]
+        hyperparameters.model.lag = config["lag"]
+        hyperparameters.model.weather_future = config["weather_future"]
+        hyperparameters.model.dim_feedforward_factor = config["dim_feedforward_factor"]
+
+        hyperparameters.train.batch_size = config["batch_size"]
+        hyperparameters.train.lr = config["lr"]
+        hyperparameters.train.min_lr = config["min_lr"]
+
+        randomseed = 42
+        random.seed(randomseed)
+        np.random.seed(randomseed)
+        torch.manual_seed(randomseed)
+        torch.cuda.manual_seed(randomseed)
+        torch.cuda.manual_seed_all(randomseed)
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
+        try:
+            training.train_loop(hyperparameters, df, train_id=train_id)
+        except Exception as e:
+            print(e)
+            print("An error occurred during training.")
+            # traceback
+            traceback.print_exc()
 
 
 def hyper_parameter_optimize(sweep_id=None):
@@ -39,40 +77,10 @@ def hyper_parameter_optimize(sweep_id=None):
             }
         )
 
-    def exception_handling_train():
-        with wandb.init(
-            project="Seminar ML for Renewable Energy System",
-            entity="Seminar ML for Renewable Energy System",
-        ) as run:
-            train_id = run.id  # Using the WandB run ID as train_id
-            config = run.config  # Retrieve the configuration for this run
-
-            hyperparameters = get_config()
-            hyperparameters.model.num_layers = config["num_layers"]
-            hyperparameters.model.num_heads = config["num_heads"]
-            hyperparameters.model.dropout = config["dropout"]
-            hyperparameters.model.lag = config["lag"]
-            hyperparameters.model.weather_future = config["weather_future"]
-            hyperparameters.model.dim_feedforward_factor = config[
-                "dim_feedforward_factor"
-            ]
-
-            hyperparameters.train.batch_size = config["batch_size"]
-            hyperparameters.train.lr = config["lr"]
-            hyperparameters.train.min_lr = config["min_lr"]
-
-            randomseed = 42
-            random.seed(randomseed)
-            np.random.seed(randomseed)
-            torch.manual_seed(randomseed)
-            torch.cuda.manual_seed(randomseed)
-            torch.cuda.manual_seed_all(randomseed)
-            torch.backends.cudnn.benchmark = False
-            torch.backends.cudnn.deterministic = True
-            training.train_loop(hyperparameters, df, train_id=train_id)
-
     wandb.agent(
-        sweep_id, exception_handling_train, count=CONF.train.hyperparameters_iters
+        sweep_id,
+        lambda: exception_handling_train(df),
+        count=CONF.train.hyperparameters_iters,
     )
 
 

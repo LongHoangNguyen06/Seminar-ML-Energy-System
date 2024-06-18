@@ -11,9 +11,9 @@ def get_config():
     CONF.data.loaded_raw_data = False  # Don't change this
 
     # Pipeline configuration
-    CONF.pipeline.process_raw_data = True
-    CONF.pipeline.normalize_data = True
-    CONF.pipeline.feature_selection = True
+    CONF.pipeline.process_raw_data = False
+    CONF.pipeline.normalize_data = False
+    CONF.pipeline.feature_selection = False
     CONF.pipeline.data_test = False
     CONF.pipeline.do_test_run_training = True
     CONF.pipeline.do_hyperopt = False
@@ -243,17 +243,17 @@ def get_config():
     CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
 
     # Transformer's architecture's tunable hyperparameters
-    CONF.model.num_layers = 1
-    CONF.model.num_heads = 2
-    CONF.model.dropout = 0.1
-    CONF.model.lag = 24
-    CONF.model.weather_future = 24
+    CONF.model.num_layers = 12
+    CONF.model.num_heads = 8
+    CONF.model.dropout = 0.24262630420417408
+    CONF.model.lag = 64
+    CONF.model.weather_future = 12
     CONF.model.dim_feedforward_factor = 4
 
     # Training tunable hyperparameters
-    CONF.train.batch_size = 512
-    CONF.train.lr = 0.0001
-    CONF.train.min_lr = 0.00001
+    CONF.train.batch_size = 256
+    CONF.train.lr = 0.08101450401430181
+    CONF.train.min_lr = 5.916627615915352e-07
 
     # Fixed hyper parameters
     CONF.train.epochs = 50

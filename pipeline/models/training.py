@@ -112,6 +112,8 @@ def train_loop(hyperparameters, df, train_id, merge_train_val: bool = False):
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(model.state_dict(), model_path)
+
+    if wandb.run is not None:
         wandb.log(
             {
                 "train_loss": train_loss,
@@ -119,4 +121,6 @@ def train_loop(hyperparameters, df, train_id, merge_train_val: bool = False):
                 "best_val_loss": best_val_loss,
             }
         )
+    else:
+        print("wandb is not initialized, skipping log.")
     return best_val_loss
