@@ -1,5 +1,6 @@
 import os
 import random
+import sys
 
 import numpy as np
 import pandas as pd
@@ -11,43 +12,39 @@ from pipeline.models import training
 
 os.environ["WANDB_TIMEOUT"] = "300"
 
-train_id = 0
 
-
-def hyper_parameter_optimize():
+def hyper_parameter_optimize(sweep_id=None):
     df = pd.read_csv(os.path.join(CONF.data.preprocessed_data_dir, "df.csv"))
-    sweep_id = wandb.sweep(
-        {
-            "project": "Seminar ML for Renewable Energy System",
-            "name": "Multitask supply only 1h, 24h",
-            "method": "bayes",  # Adjust search method as needed (grid, random)
-            "metric": {
-                "goal": "minimize",  # Specify optimization goal (minimize/maximize)
-                "name": "best_val_loss",  # Replace with the metric you want to optimize
-            },
-            "parameters": {
-                "num_layers": {"min": 1, "max": 12},
-                "num_heads": {"min": 2, "max": 23},
-                "dropout": {"min": 0.0, "max": 0.4},
-                "lag": {"min": 12, "max": 168},
-                "weather_future": {"min": 12, "max": 24},
-                "dim_feedforward_factor": {"min": 0.5, "max": 4.0},
-                "batch_size": {"values": [1024, 512, 256, 128]},
-                "lr": {"min": 1e-4, "max": 1e-1},
-                "min_lr": {"min": 1e-8, "max": 1e-5},
-            },
-        }
-    )
+    if sweep_id is None:
+        sweep_id = wandb.sweep(
+            {
+                "project": "Seminar ML for Renewable Energy System",
+                "name": "Multitask supply only 1h, 24h",
+                "method": "bayes",  # Adjust search method as needed (grid, random)
+                "metric": {
+                    "goal": "minimize",  # Specify optimization goal (minimize/maximize)
+                    "name": "best_val_loss",  # Replace with the metric you want to optimize
+                },
+                "parameters": {
+                    "num_layers": {"min": 1, "max": 12},
+                    "num_heads": {"min": 2, "max": 23},
+                    "dropout": {"min": 0.0, "max": 0.4},
+                    "lag": {"min": 12, "max": 168},
+                    "weather_future": {"min": 12, "max": 24},
+                    "dim_feedforward_factor": {"min": 0.5, "max": 4.0},
+                    "batch_size": {"values": [1024, 512, 256, 128]},
+                    "lr": {"min": 1e-4, "max": 1e-1},
+                    "min_lr": {"min": 1e-8, "max": 1e-5},
+                },
+            }
+        )
 
     def exception_handling_train():
-        global train_id
-        train_id += 1
-
         with wandb.init(
             project="Seminar ML for Renewable Energy System",
             entity="Seminar ML for Renewable Energy System",
-            name=f"run_{train_id}",
         ) as run:
+            train_id = run.id  # Using the WandB run ID as train_id
             config = run.config  # Retrieve the configuration for this run
 
             hyperparameters = get_config()
@@ -80,4 +77,8 @@ def hyper_parameter_optimize():
 
 
 if __name__ == "__main__":
-    hyper_parameter_optimize()
+    if len(sys.argv) > 1:
+        sweep_id = sys.argv[1]
+        hyper_parameter_optimize(sweep_id)
+    else:
+        hyper_parameter_optimize()
