@@ -24,13 +24,14 @@ def hyper_parameter_optimize():
                 "name": "best_val_loss",  # Replace with the metric you want to optimize
             },
             "parameters": {
-                "num_layers": {"min": 1, "max": 6},
-                "num_heads": {"min": 2, "max": 10},
-                "dropout": {"min": 0.0, "max": 0.3},
-                "lag": {"min": 12, "max": 72},
+                "num_layers": {"min": 1, "max": 12},
+                "num_heads": {"min": 2, "max": 23},
+                "dropout": {"min": 0.0, "max": 0.4},
+                "lag": {"min": 12, "max": 168},
                 "weather_future": {"min": 12, "max": 24},
-                "batch_size": {"values": [512, 256, 128, 64]},
-                "lr": {"min": 1e-4, "max": 1e-2},
+                "dim_feedforward_factor": {"min": 0.5, "max": 4.0},
+                "batch_size": {"values": [1024, 512, 256, 128]},
+                "lr": {"min": 1e-4, "max": 1e-1},
                 "min_lr": {"min": 1e-8, "max": 1e-5},
             },
         }
@@ -48,10 +49,12 @@ def hyper_parameter_optimize():
             hyperparameters = get_config()
             hyperparameters.model.num_layers = config["num_layers"]
             hyperparameters.model.num_heads = config["num_heads"]
-            hyperparameters.model.forward_expansion = config["num_heads"]
             hyperparameters.model.dropout = config["dropout"]
             hyperparameters.model.lag = config["lag"]
             hyperparameters.model.weather_future = config["weather_future"]
+            hyperparameters.model.dim_feedforward_factor = config[
+                "dim_feedforward_factor"
+            ]
 
             hyperparameters.train.batch_size = config["batch_size"]
             hyperparameters.train.lr = config["lr"]

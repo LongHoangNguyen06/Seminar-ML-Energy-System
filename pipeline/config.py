@@ -144,6 +144,19 @@ def get_config():
 
     # Time series hyper parameters
     CONF.model.features = [
+        "prices_Germany/Luxembourg [€/MWh]",
+        "prices_Belgium [€/MWh]",
+        "prices_Denmark 1 [€/MWh]",
+        "prices_Denmark 2 [€/MWh]",
+        "prices_France [€/MWh]",
+        "prices_Netherlands [€/MWh]",
+        "prices_Norway 2 [€/MWh]",
+        "prices_Austria [€/MWh]",
+        "prices_Sweden 4 [€/MWh]",
+        "prices_Switzerland [€/MWh]",
+        "prices_Czech Republic [€/MWh]",
+        "prices_Italy (North) [€/MWh]",
+        "prices_Slovenia [€/MWh]",
         "capacity_Biomass [MW]",
         "capacity_Hydro Power [MW]",
         "capacity_Wind Offshore [MW] ",
@@ -156,10 +169,17 @@ def get_config():
         "capacity_Natural Gas [MW]",
         "capacity_Pumped Storage [MW]",
         "capacity_Other Conventional [MW]",
+        "supply_Biomass [MW]",
+        "supply_Hydro Power [MW]",
+        # "supply_Wind Offshore [MW] ",
+        # "supply_Wind Onshore [MW]",
+        # "supply_Photovoltaic [MW]",
+        "supply_Other Renewable [MW]",
         "supply_Nuclear Power [MW]",
         "supply_Lignite [MW]",
         "supply_Coal [MW]",
         "supply_Natural Gas [MW]",
+        "supply_Pumped Storage [MW]",
         "supply_Other Conventional [MW]",
         "demand_Total (Grid Load) [MWh]",
         "demand_Residual Load [MWh]",
@@ -211,19 +231,14 @@ def get_config():
         "weather_v100_mean",
     ]
     CONF.model.targets = [
-        "supply_Biomass [MW]",
-        "supply_Hydro Power [MW]",
         "supply_Wind Offshore [MW] ",
         "supply_Wind Onshore [MW]",
         "supply_Photovoltaic [MW]",
-        "supply_Other Renewable [MW]",
-        "supply_Pumped Storage [MW]",
     ]
 
     # Transformer's architecture's fixed hyperparameters
     CONF.model.num_targets = len(CONF.model.targets)
     CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
-    CONF.model.forward_expansion = 2
 
     # Transformer's architecture's tunable hyperparameters
     CONF.model.num_layers = 1
@@ -231,6 +246,7 @@ def get_config():
     CONF.model.dropout = 0.1
     CONF.model.lag = 24
     CONF.model.weather_future = 24
+    CONF.model.dim_feedforward_factor = 4
 
     # Training tunable hyperparameters
     CONF.train.batch_size = 512
@@ -238,7 +254,7 @@ def get_config():
     CONF.train.min_lr = 0.00001
 
     # Fixed hyper parameters
-    CONF.train.epochs = 100
+    CONF.train.epochs = 50
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 100
     return CONF

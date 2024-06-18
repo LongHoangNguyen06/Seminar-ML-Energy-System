@@ -27,11 +27,9 @@ class TimeSeriesTransformer(nn.Module):
         super(TimeSeriesTransformer, self).__init__()
         num_layers = hyperparameters.model.num_layers
         num_heads = hyperparameters.model.num_heads
-        forward_expansion = hyperparameters.model.forward_expansion
         dropout = hyperparameters.model.dropout
-        output_horizons = hyperparameters.model.horizons
-        d_model = hyperparameters.model.num_features * forward_expansion
-        self.output_horizons = output_horizons
+        d_model = hyperparameters.model.num_features * num_heads
+        self.output_horizons = hyperparameters.model.horizons
 
         # Linear transformation to project input features to a higher dimensional space
         self.feature_to_embedding = nn.Linear(
@@ -46,7 +44,7 @@ class TimeSeriesTransformer(nn.Module):
         self.encoder_layer = nn.TransformerEncoderLayer(
             d_model=d_model,
             nhead=num_heads,
-            dim_feedforward=d_model * 4,
+            dim_feedforward=d_model * hyperparameters.model.dim_feedforward_factor,
             dropout=dropout,
         )
         self.transformer_encoder = nn.TransformerEncoder(
@@ -57,7 +55,7 @@ class TimeSeriesTransformer(nn.Module):
         self.fc_out = nn.ModuleList(
             [
                 nn.Linear(d_model, hyperparameters.model.num_targets)
-                for _ in output_horizons
+                for _ in self.output_horizons
             ]
         )
 
