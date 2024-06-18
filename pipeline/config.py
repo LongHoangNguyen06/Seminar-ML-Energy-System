@@ -256,7 +256,7 @@ def get_config():
     CONF.train.min_lr = 5.916627615915352e-07
 
     # Fixed hyper parameters
-    CONF.train.patience = 50
+    CONF.train.patience = 20
     CONF.train.epochs = 100
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 10000
