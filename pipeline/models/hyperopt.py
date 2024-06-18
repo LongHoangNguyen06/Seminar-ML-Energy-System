@@ -46,7 +46,12 @@ def exception_handling_train(df):
         torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.deterministic = True
         try:
-            training.train_loop(hyperparameters, df, train_id=train_id)
+            training.train_loop(
+                hyperparameters,
+                df,
+                train_id=train_id,
+                patience=hyperparameters.train.patience,
+            )
         except Exception as e:
             print(e)
             print("An error occurred during training.")
@@ -67,8 +72,8 @@ def hyper_parameter_optimize(sweep_id=None):
                     "name": "best_val_loss",  # Replace with the metric you want to optimize
                 },
                 "parameters": {
-                    "num_layers": {"values": list(range(2, 8, 2))},
-                    "num_heads": {"values": list(range(2, 11, 2))},
+                    "num_layers": {"values": list(range(2, 7, 2))},
+                    "num_heads": {"values": list(range(2, 9, 2))},
                     "dropout": {"min": 0.0, "max": 0.4},
                     "lag": {"min": 12, "max": 48},
                     "weather_future": {"min": 12, "max": 24},

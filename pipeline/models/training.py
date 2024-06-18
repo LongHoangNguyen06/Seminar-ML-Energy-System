@@ -50,7 +50,12 @@ def validate(model, val_loader, criterion):
 
 
 def train_loop(
-    hyperparameters, df, train_id, merge_train_val: bool = False, log_wandb: bool = True
+    hyperparameters,
+    df,
+    train_id,
+    merge_train_val: bool = False,
+    log_wandb: bool = True,
+    patience: int = 10,
 ):
     """
     Main training loop for the TimeSeriesTransformer model.
@@ -103,6 +108,7 @@ def train_loop(
 
     # Main training loop
     num_epochs = hyperparameters.train.epochs
+    patience_counter = 0  # Initialize the patience counter
     best_val_loss = float("inf")
     for epoch in range(num_epochs):
         train_loss = train(model, train_loader, optimizer, criterion, scheduler)
@@ -114,6 +120,15 @@ def train_loop(
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(model.state_dict(), model_path)
+            patience_counter = 0  # Reset patience counter on improvement
+        else:
+            patience_counter += 1  # Increment patience counter if no improvement
+
+        if patience_counter >= patience:
+            print(
+                f"Stopping early due to no improvement in validation loss for {patience} epochs."
+            )
+            break  # Exit the loop if patience has run out
 
         if log_wandb:
             wandb.log(
