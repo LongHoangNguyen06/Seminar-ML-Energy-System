@@ -1,3 +1,6 @@
+from functools import cache
+
+import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
@@ -18,26 +21,29 @@ class TimeSeriesDataset(Dataset):
         self.max_horizon = max(self.horizons) + self.weather_future
         # Calculate total samples considering the lag and the maximum forecast horizon
         self.total_samples = len(df) - (self.lag + self.max_horizon)
+        self.lags_array = np.array([lag for lag in range(self.lag)])
+        self.horizon_array = np.array([horizon for horizon in self.horizons])
+        self.data = df.to_numpy()
+        self.feature_indices = np.array([df.columns.get_loc(f) for f in self.features])
+        self.target_indices = np.array([df.columns.get_loc(t) for t in self.targets])
 
     def __len__(self):
         return self.total_samples
 
+    @cache
     def __getitem__(self, idx):
+        assert isinstance(idx, int), "Index must be an integer"
         # Adjust start index to accommodate the lag
         idx += self.lag
 
         # Collect inputs using the lag
         input_features = torch.tensor(
-            self.dataframe.loc[
-                [idx - lag for lag in range(self.lag)], self.features
-            ].values.astype(float)
+            self.data[np.ix_(idx - self.lags_array, self.feature_indices)].astype(float)
         )  # Shape: [n_lag, n_features]
 
         # Collect lagged targets as additional features
         input_targets = torch.tensor(
-            self.dataframe.loc[
-                [idx - lag for lag in range(0, self.lag)], self.targets
-            ].values.astype(float)
+            self.data[np.ix_(idx - self.lags_array, self.target_indices)].astype(float)
         )  # Shape: [n_lag, num_targets]
 
         # Concatenate input features and lagged targets along the feature dimension
@@ -45,9 +51,9 @@ class TimeSeriesDataset(Dataset):
 
         # Collect targets for each horizon and each feature
         targets = torch.tensor(
-            self.dataframe.loc[
-                [idx + horizon for horizon in self.horizons], self.targets
-            ].values.astype(float)
+            self.dataframe.loc[idx + self.horizon_array, self.targets].values.astype(
+                float
+            )
         )  # Shape will be [n_horizons, n_outputs]
         return inputs.to(torch.float32), targets.to(torch.float32)
 

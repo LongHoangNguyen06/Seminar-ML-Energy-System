@@ -13,7 +13,7 @@ def get_config():
     # Pipeline configuration
     CONF.pipeline.process_raw_data = False
     CONF.pipeline.normalize_data = False
-    CONF.pipeline.feature_selection = False
+    CONF.pipeline.feature_selection = True
     CONF.pipeline.data_test = False
     CONF.pipeline.do_test_run_training = True
     CONF.pipeline.do_hyperopt = False
