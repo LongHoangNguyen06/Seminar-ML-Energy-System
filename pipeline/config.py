@@ -7,6 +7,12 @@ from dotmap import DotMap
 
 def get_config():
     CONF = DotMap()
+
+    # Wandb configuration
+    CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
+    CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
+    CONF.wandb.sweep_name = "multitask_supply_1h_24h_more_layers."
+
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
 
@@ -47,7 +53,9 @@ def get_config():
     CONF.model.horizons = [1, 24]
 
     # Save paths configuration
-    CONF.model.save_path = os.path.join(CONF.data.data_dir, "models")
+    CONF.model.save_path = os.path.join(
+        CONF.data.data_dir, "models", CONF.wandb.sweep_name
+    )
     CONF.model.final_model_path = os.path.join(
         CONF.model.save_path, "run_v8t449t1", "model.pth"
     )
@@ -260,13 +268,6 @@ def get_config():
     CONF.train.epochs = 100
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 10000
-
-    # Wandb configuration
-    CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.sweep_name = (
-        "Multitask supply only 1h, 24h. ReLU output and more layers."
-    )
     return CONF
 
 
