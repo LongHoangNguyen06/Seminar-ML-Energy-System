@@ -260,6 +260,13 @@ def get_config():
     CONF.train.epochs = 100
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 10000
+
+    # Wandb configuration
+    CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
+    CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
+    CONF.wandb.sweep_name = (
+        "Multitask supply only 1h, 24h. ReLU output and more layers."
+    )
     return CONF
 
 

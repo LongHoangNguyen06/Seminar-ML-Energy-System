@@ -9,20 +9,17 @@ from pipeline.config import CONF, get_config
 from pipeline.models import training
 
 os.environ["WANDB_TIMEOUT"] = "300"
-PROJECT_NAME = "Seminar ML for Renewable Energy System"
-ENTITY_NAME = "Seminar ML for Renewable Energy System"
-SWEEP_NAME = "Multitask supply only 1h, 24h. ReLU output and more layers."
 
 
 def exception_handling_train(df):
+    hyperparameters = get_config()
     with wandb.init(
-        project=PROJECT_NAME,
-        entity=ENTITY_NAME,
+        project=hyperparameters.wandb.project_name,
+        entity=hyperparameters.wandb.sweep_name,
     ) as run:
         train_id = run.name  # Using the WandB's name train_id
         config = run.config  # Retrieve the configuration for this run
 
-        hyperparameters = get_config()
         hyperparameters.model.num_layers = config["num_layers"]
         hyperparameters.model.num_heads = config["num_heads"]
         hyperparameters.model.dropout = config["dropout"]
@@ -52,8 +49,8 @@ def hyper_parameter_optimize(sweep_id=None):
     if sweep_id is None:
         sweep_id = wandb.sweep(
             {
-                "project": PROJECT_NAME,
-                "name": SWEEP_NAME,
+                "project": CONF.wandb.project_name,
+                "name": CONF.wandb.sweep_name,
                 "method": "bayes",  # Adjust search method as needed (grid, random)
                 "metric": {
                     "goal": "minimize",  # Specify optimization goal (minimize/maximize)
@@ -77,7 +74,7 @@ def hyper_parameter_optimize(sweep_id=None):
         sweep_id,
         lambda: exception_handling_train(df),
         count=CONF.train.hyperparameters_iters,
-        project=PROJECT_NAME,
+        project=CONF.wandb.sweep_name,
     )
 
 
