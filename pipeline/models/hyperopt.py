@@ -61,7 +61,7 @@ def hyper_parameter_optimize(sweep_id=None):
                 },
                 "parameters": {
                     "num_layers": {"values": list(range(2, 11, 2))},
-                    "num_heads": {"values": list(range(2, 9, 2)) + [1]},
+                    "num_heads": {"values": list(range(2, 9, 2))},
                     "dropout": {"min": 0.0, "max": 0.4},
                     "lag": {"min": 12, "max": 48},
                     "weather_future": {"min": 12, "max": 24},
