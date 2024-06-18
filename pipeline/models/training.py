@@ -1,6 +1,8 @@
 import os
 import pickle
+import random
 
+import numpy as np
 import torch
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR as Scheduler
@@ -72,6 +74,15 @@ def train_loop(
         best_val_loss : float
             Best validation loss achieved during training.
     """
+    randomseed = 42
+    random.seed(randomseed)
+    np.random.seed(randomseed)
+    torch.manual_seed(randomseed)
+    torch.cuda.manual_seed(randomseed)
+    torch.cuda.manual_seed_all(randomseed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+
     experiment_path = os.path.join(hyperparameters.model.save_path, f"run_{train_id}")
     model_path = os.path.join(experiment_path, "model.pth")
     hyperparameters_path = os.path.join(experiment_path, "hyperparameters.pth")

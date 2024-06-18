@@ -1,11 +1,8 @@
 import os
-import random
 import sys
 import traceback
 
-import numpy as np
 import pandas as pd
-import torch
 
 import wandb
 from pipeline.config import CONF, get_config
@@ -36,15 +33,6 @@ def exception_handling_train(df):
         hyperparameters.train.batch_size = config["batch_size"]
         hyperparameters.train.lr = config["lr"]
         hyperparameters.train.min_lr = config["min_lr"]
-
-        randomseed = 42
-        random.seed(randomseed)
-        np.random.seed(randomseed)
-        torch.manual_seed(randomseed)
-        torch.cuda.manual_seed(randomseed)
-        torch.cuda.manual_seed_all(randomseed)
-        torch.backends.cudnn.benchmark = False
-        torch.backends.cudnn.deterministic = True
         try:
             training.train_loop(
                 hyperparameters,
