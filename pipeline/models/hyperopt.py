@@ -11,7 +11,7 @@ from pipeline.models import training
 os.environ["WANDB_TIMEOUT"] = "300"
 PROJECT_NAME = "Seminar ML for Renewable Energy System"
 ENTITY_NAME = "Seminar ML for Renewable Energy System"
-SWEEP_NAME = "Multitask supply only 1h, 24h"
+SWEEP_NAME = "Multitask supply only 1h, 24h. ReLU output and more layers."
 
 
 def exception_handling_train(df):
@@ -61,11 +61,11 @@ def hyper_parameter_optimize(sweep_id=None):
                 },
                 "parameters": {
                     "num_layers": {"values": list(range(2, 11, 2))},
-                    "num_heads": {"values": list(range(2, 9, 2))},
+                    "num_heads": {"values": list(range(2, 9, 2)) + [1]},
                     "dropout": {"min": 0.0, "max": 0.4},
                     "lag": {"min": 12, "max": 48},
                     "weather_future": {"min": 12, "max": 24},
-                    "dim_feedforward_factor": {"values": [0.5, 1.0, 2.0, 4.0]},
+                    "dim_feedforward_factor": {"values": [1.0, 2.0, 4.0]},
                     "batch_size": {"values": [512, 256, 128]},
                     "lr": {"min": 1e-4, "max": 1e-1},
                     "min_lr": {"min": 1e-8, "max": 1e-5},
