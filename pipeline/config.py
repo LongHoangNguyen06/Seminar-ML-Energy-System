@@ -1,8 +1,10 @@
 # flake8: noqa
 import os
 
-import torch.nn as nn
 from dotmap import DotMap
+
+from pipeline import utils
+from pipeline.models.loss import RMSE
 
 
 def get_config():
@@ -11,7 +13,9 @@ def get_config():
     # Wandb configuration
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.sweep_name = "multitask_supply_1h_24h_more_layers."
+    CONF.wandb.sweep_name = (
+        "multitask_supply_1h_24h_more_layers " + utils.current_time_str()
+    )
 
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
@@ -266,7 +270,7 @@ def get_config():
     # Fixed hyper parameters
     CONF.train.patience = 20
     CONF.train.epochs = 100
-    CONF.train.loss = nn.MSELoss
+    CONF.train.loss = RMSE
     CONF.train.hyperparameters_iters = 10000
     return CONF
 

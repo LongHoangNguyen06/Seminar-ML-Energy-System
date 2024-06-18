@@ -5,6 +5,7 @@ import traceback
 import pandas as pd
 
 import wandb
+from pipeline import utils
 from pipeline.config import CONF, get_config
 from pipeline.models import training
 
@@ -13,11 +14,12 @@ os.environ["WANDB_TIMEOUT"] = "300"
 
 def exception_handling_train(df):
     hyperparameters = get_config()
+    run_name = utils.current_time_str()
     with wandb.init(
         project=hyperparameters.wandb.project_name,
-        entity=hyperparameters.wandb.sweep_name,
+        name=run_name,
     ) as run:
-        train_id = run.name  # Using the WandB's name train_id
+        train_id = run_name  # Using the WandB's name train_id
         config = run.config  # Retrieve the configuration for this run
 
         hyperparameters.model.num_layers = config["num_layers"]
@@ -74,7 +76,7 @@ def hyper_parameter_optimize(sweep_id=None):
         sweep_id,
         lambda: exception_handling_train(df),
         count=CONF.train.hyperparameters_iters,
-        project=CONF.wandb.sweep_name,
+        project=CONF.wandb.project_name,
     )
 
 
