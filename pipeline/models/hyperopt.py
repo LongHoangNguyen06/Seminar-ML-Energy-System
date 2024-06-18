@@ -18,6 +18,8 @@ def hyper_parameter_optimize():
     df = pd.read_csv(os.path.join(CONF.data.preprocessed_data_dir, "df.csv"))
     sweep_id = wandb.sweep(
         {
+            "project": "Seminar ML for Renewable Energy System",
+            "name": "Multitask supply only 1h, 24h",
             "method": "bayes",  # Adjust search method as needed (grid, random)
             "metric": {
                 "goal": "minimize",  # Specify optimization goal (minimize/maximize)
@@ -42,7 +44,9 @@ def hyper_parameter_optimize():
         train_id += 1
 
         with wandb.init(
-            project="Seminar ML for Renewable Energy System", name=f"run_{train_id}"
+            project="Seminar ML for Renewable Energy System",
+            entity="Seminar ML for Renewable Energy System",
+            name=f"run_{train_id}",
         ) as run:
             config = run.config  # Retrieve the configuration for this run
 
