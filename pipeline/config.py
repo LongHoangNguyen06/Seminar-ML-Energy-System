@@ -3,7 +3,6 @@ import os
 
 from dotmap import DotMap
 
-from pipeline import utils
 from pipeline.models.loss import RMSE
 
 
@@ -13,9 +12,7 @@ def get_config():
     # Wandb configuration
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.sweep_name = (
-        "multitask_supply_1h_24h_more_layers " + utils.current_time_str()
-    )
+    CONF.wandb.sweep_name = "0001_multitask_supply_1h_24h_more_layers"
 
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
