@@ -7,7 +7,7 @@ from dotmap import DotMap
 
 def get_config():
     CONF = DotMap()
-    # Fixed variables, don'T change
+    # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
 
     # Pipeline configuration

@@ -4,5 +4,6 @@
         "venv": true,
         ".pre-commit-config.yaml": true,
         "matplotlib_style.txt": true,
+        "wandb": true
     }
 }
