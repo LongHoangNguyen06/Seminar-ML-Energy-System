@@ -25,30 +25,28 @@ class PositionalEncoding(nn.Module):
 class TimeSeriesTransformer(nn.Module):
     def __init__(self, hyperparameters):
         super(TimeSeriesTransformer, self).__init__()
-        num_layers = hyperparameters.model.num_layers
-        num_heads = hyperparameters.model.num_heads
-        dropout = hyperparameters.model.dropout
-        d_model = hyperparameters.model.num_features * num_heads
+        d_model = hyperparameters.model.num_features * hyperparameters.model.num_heads
         self.output_horizons = hyperparameters.model.horizons
 
         # Linear transformation to project input features to a higher dimensional space
         self.feature_to_embedding = nn.Linear(
             in_features=hyperparameters.model.num_features,
             out_features=d_model,
-            bias=False,
         )
 
-        self.positional_encoder = PositionalEncoding(d_model=d_model, dropout=dropout)
+        self.positional_encoder = PositionalEncoding(
+            d_model=d_model, dropout=hyperparameters.model.dropout
+        )
 
         # Transformer Encoder Layer
         self.encoder_layer = nn.TransformerEncoderLayer(
             d_model=d_model,
-            nhead=num_heads,
+            nhead=hyperparameters.model.num_heads,
             dim_feedforward=d_model * hyperparameters.model.dim_feedforward_factor,
-            dropout=dropout,
+            dropout=hyperparameters.model.dropout,
         )
         self.transformer_encoder = nn.TransformerEncoder(
-            self.encoder_layer, num_layers=num_layers
+            self.encoder_layer, num_layers=hyperparameters.model.num_heads
         )
 
         # Output layer for each horizon and feature
