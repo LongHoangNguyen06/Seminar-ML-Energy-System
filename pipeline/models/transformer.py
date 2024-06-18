@@ -57,6 +57,8 @@ class TimeSeriesTransformer(nn.Module):
             ]
         )
 
+        self.relu = nn.ReLU()
+
     def forward(self, src):
         src = src.permute(
             1, 0, 2
@@ -76,6 +78,6 @@ class TimeSeriesTransformer(nn.Module):
         pooled_transformed = transformed.mean(dim=0)
 
         # Forecast
-        return nn.ReLU()(
+        return self.relu(
             torch.stack([fc(pooled_transformed) for fc in self.fc_out], dim=1)
         )
