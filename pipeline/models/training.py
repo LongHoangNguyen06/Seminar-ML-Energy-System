@@ -115,14 +115,14 @@ def train_loop(
             best_val_loss = val_loss
             torch.save(model.state_dict(), model_path)
 
-    if log_wandb:
-        wandb.log(
-            {
-                "train_loss": train_loss,
-                "val_loss": val_loss,
-                "best_val_loss": best_val_loss,
-            }
-        )
-    else:
-        print("wandb is not initialized, skipping log.")
+        if log_wandb:
+            wandb.log(
+                {
+                    "train_loss": train_loss,
+                    "val_loss": val_loss,
+                    "best_val_loss": best_val_loss,
+                }
+            )
+        else:
+            print("wandb is not initialized, skipping log.")
     return best_val_loss
