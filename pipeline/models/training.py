@@ -113,9 +113,10 @@ def train_loop(
     for epoch in range(num_epochs):
         train_loss = train(model, train_loader, optimizer, criterion, scheduler)
         val_loss = validate(model, val_loader, criterion)
+        lr = optimizer.param_groups[0]["lr"]
 
         print(
-            f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
+            f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, LR: {lr:.4f}"
         )
         if val_loss < best_val_loss:
             best_val_loss = val_loss
@@ -136,6 +137,7 @@ def train_loop(
                     "train_loss": train_loss,
                     "val_loss": val_loss,
                     "best_val_loss": best_val_loss,
+                    "learning_rate": lr,
                 }
             )
         else:

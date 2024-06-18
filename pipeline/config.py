@@ -259,7 +259,7 @@ def get_config():
     CONF.train.patience = 10
     CONF.train.epochs = 50
     CONF.train.loss = nn.MSELoss
-    CONF.train.hyperparameters_iters = 100
+    CONF.train.hyperparameters_iters = 10000
     return CONF
 
 
