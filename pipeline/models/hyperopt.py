@@ -19,7 +19,7 @@ def exception_handling_train(df):
         project=PROJECT_NAME,
         entity=ENTITY_NAME,
     ) as run:
-        train_id = run.id  # Using the WandB run ID as train_id
+        train_id = run.name  # Using the WandB's name train_id
         config = run.config  # Retrieve the configuration for this run
 
         hyperparameters = get_config()
@@ -60,7 +60,7 @@ def hyper_parameter_optimize(sweep_id=None):
                     "name": "best_val_loss",  # Replace with the metric you want to optimize
                 },
                 "parameters": {
-                    "num_layers": {"values": list(range(2, 7, 2))},
+                    "num_layers": {"values": list(range(2, 11, 2))},
                     "num_heads": {"values": list(range(2, 9, 2))},
                     "dropout": {"min": 0.0, "max": 0.4},
                     "lag": {"min": 12, "max": 48},

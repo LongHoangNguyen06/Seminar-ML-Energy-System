@@ -83,7 +83,7 @@ def train_loop(
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
 
-    experiment_path = os.path.join(hyperparameters.model.save_path, f"run_{train_id}")
+    experiment_path = os.path.join(hyperparameters.model.save_path, f"{train_id}")
     model_path = os.path.join(experiment_path, "model.pth")
     hyperparameters_path = os.path.join(experiment_path, "hyperparameters.pth")
     os.makedirs(experiment_path, exist_ok=True)

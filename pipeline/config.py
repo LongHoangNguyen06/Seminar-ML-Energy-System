@@ -18,7 +18,7 @@ def get_config():
     CONF.pipeline.do_test_run_training = True
     CONF.pipeline.do_hyperopt = False
     CONF.pipeline.do_final_train = False
-    CONF.pipeline.do_test = False
+    CONF.pipeline.do_test = True
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
 
@@ -49,10 +49,10 @@ def get_config():
     # Save paths configuration
     CONF.model.save_path = os.path.join(CONF.data.data_dir, "models")
     CONF.model.final_model_path = os.path.join(
-        CONF.model.save_path, "run_9", "model.pth"
+        CONF.model.save_path, "run_v8t449t1", "model.pth"
     )
     CONF.model.best_hyperparameter_path = os.path.join(
-        CONF.model.save_path, "run_9", "hyperparameters.pth"
+        CONF.model.save_path, "run_v8t449t1", "hyperparameters.pth"
     )
 
     # Configuration for feature selection
@@ -256,8 +256,8 @@ def get_config():
     CONF.train.min_lr = 5.916627615915352e-07
 
     # Fixed hyper parameters
-    CONF.train.patience = 10
-    CONF.train.epochs = 50
+    CONF.train.patience = 50
+    CONF.train.epochs = 100
     CONF.train.loss = nn.MSELoss
     CONF.train.hyperparameters_iters = 10000
     return CONF
