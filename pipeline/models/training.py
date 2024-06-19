@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 import wandb
 from pipeline.models.dataset import TimeSeriesDataset
+from pipeline.models.transformer import build_model
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -106,9 +107,8 @@ def train_loop(
     )
 
     # Initialize model
-    model = hyperparameters.model.architecture(hyperparameters=hyperparameters).to(
-        device
-    )
+    model = build_model(hyperparameters=hyperparameters)
+    model = model.to(device)
     optimizer = Adam(model.parameters(), lr=hyperparameters.train.lr)
     criterion = hyperparameters.train.loss()
 

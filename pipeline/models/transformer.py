@@ -5,6 +5,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+def build_model(hyperparameters):
+    if hyperparameters.model.architecture == "MultiTaskTransformer":
+        return MultiTaskTransformer(hyperparameters=hyperparameters)
+    elif hyperparameters.model.architecture == "HorizonTransformer":
+        return HorizonTransformer(hyperparameters=hyperparameters)
+    elif hyperparameters.model.architecture == "TargetTransformer":
+        return TargetTransformer(hyperparameters=hyperparameters)
+    elif hyperparameters.model.architecture == "HorizonTargetTransformer":
+        return HorizonTargetTransformer(hyperparameters=hyperparameters)
+    else:
+        raise ValueError("Invalid model architecture")
+
+
 class PositionalEncoding(nn.Module):
 
     def __init__(self, d_model, dropout=0.1, max_len=5000):
@@ -185,9 +198,9 @@ class HorizonTargetTransformer(nn.Module):
         super().__init__()
         self.models = nn.ModuleList(
             [
-                ScalarTransformer(hyperparameters, horizon_idx=h, target_idx=t)
-                for h in range(len(hyperparameters.model.horizons))
-                for t in range(len(hyperparameters.model.targets))
+                ScalarTransformer(hyperparameters)
+                for _ in range(len(hyperparameters.model.horizons))
+                for _ in range(len(hyperparameters.model.targets))
             ]
         )
         self.n_horzions = len(hyperparameters.model.horizons)

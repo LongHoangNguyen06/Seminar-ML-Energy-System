@@ -4,7 +4,6 @@ import os
 from dotmap import DotMap
 
 from pipeline.models.loss import RMSE
-from pipeline.models.transformer import MultiTaskTransformer
 
 
 def get_config():
@@ -297,7 +296,7 @@ def get_config():
     CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
 
     # Transformer's architecture's tunable hyperparameters
-    CONF.model.architecture = MultiTaskTransformer
+    CONF.model.architecture = "HorizonTargetTransformer"
     CONF.model.num_layers = 1
     CONF.model.num_heads = 1
     CONF.model.dropout = 0.1
