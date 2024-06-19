@@ -20,9 +20,9 @@ def get_config():
     # Pipeline configuration
     CONF.pipeline.process_raw_data = False
     CONF.pipeline.normalize_data = False
-    CONF.pipeline.feature_selection = True
+    CONF.pipeline.feature_selection = False
     CONF.pipeline.data_test = False
-    CONF.pipeline.do_test_run_training = True
+    CONF.pipeline.do_test_run_training = False
     CONF.pipeline.do_hyperopt = False
     CONF.pipeline.do_final_train = False
     CONF.pipeline.do_test = True
@@ -58,10 +58,10 @@ def get_config():
         CONF.data.data_dir, "models", CONF.wandb.sweep_name
     )
     CONF.model.final_model_path = os.path.join(
-        CONF.model.save_path, "run_v8t449t1", "model.pth"
+        CONF.model.save_path, "23:19:14 18-06-2024", "model.pth"
     )
     CONF.model.best_hyperparameter_path = os.path.join(
-        CONF.model.save_path, "run_v8t449t1", "hyperparameters.pth"
+        CONF.model.save_path, "23:19:14 18-06-2024", "hyperparameters.pth"
     )
 
     # Configuration for feature selection
