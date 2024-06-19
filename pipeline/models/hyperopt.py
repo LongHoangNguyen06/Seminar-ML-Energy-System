@@ -8,6 +8,12 @@ import wandb
 from pipeline import utils
 from pipeline.config import CONF, get_config
 from pipeline.models import training
+from pipeline.models.transformer import (
+    HorizonTargetTransformer,
+    HorizonTransformer,
+    MultiTaskTransformer,
+    TargetTransformer,
+)
 
 os.environ["WANDB_TIMEOUT"] = "300"
 
@@ -22,6 +28,16 @@ def exception_handling_train(df):
         train_id = run_name  # Using the WandB's name train_id
         config = run.config  # Retrieve the configuration for this run
 
+        if config["architecture"] == "MultiTaskTransformer":
+            hyperparameters.model.architecture = MultiTaskTransformer
+        elif config["architecture"] == "HorizonTargetTransformer":
+            hyperparameters.model.architecture = HorizonTargetTransformer
+        elif config["architecture"] == "HorizonTransformer":
+            hyperparameters.model.architecture = HorizonTransformer
+        elif config["architecture"] == "TargetTransformer":
+            hyperparameters.model.architecture = TargetTransformer
+        else:
+            raise ValueError("Invalid architecture")
         hyperparameters.model.num_layers = config["num_layers"]
         hyperparameters.model.num_heads = config["num_heads"]
         hyperparameters.model.dropout = config["dropout"]
@@ -59,6 +75,14 @@ def hyper_parameter_optimize(sweep_id=None):
                     "name": "best_val_loss",  # Replace with the metric you want to optimize
                 },
                 "parameters": {
+                    "architecture": {
+                        "values": [
+                            "MultiTaskTransformer",
+                            "HorizonTargetTransformer",
+                            "HorizonTransformer",
+                            "TargetTransformer",
+                        ]
+                    },
                     "num_layers": {"values": [1, 2]},
                     "num_heads": {"values": [1, 2]},
                     "dropout": {"min": 0.0, "max": 0.1},
