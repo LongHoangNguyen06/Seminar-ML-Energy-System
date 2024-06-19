@@ -13,9 +13,7 @@ def get_config():
     # Wandb configuration
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.sweep_name = (
-        "0003_multitask_supply_1h_24h_fewer_heads_more_ff_price_diff_odd_d_model"
-    )
+    CONF.wandb.sweep_name = "004_optimize_architecture"
 
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
@@ -311,9 +309,9 @@ def get_config():
     CONF.train.min_lr = 5.916627615915352e-07
 
     # Fixed hyper parameters
+    CONF.train.loss = RMSE
     CONF.train.patience = 20
     CONF.train.epochs = 100
-    CONF.train.loss = RMSE
     CONF.train.hyperparameters_iters = 10000
     return CONF
 

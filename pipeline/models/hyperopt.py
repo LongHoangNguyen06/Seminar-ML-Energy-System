@@ -83,16 +83,28 @@ def hyper_parameter_optimize(sweep_id=None):
                             "TargetTransformer",
                         ]
                     },
-                    "num_layers": {"values": [1, 2]},
-                    "num_heads": {"values": [1, 2]},
+                    "num_layers": {"values": [1, 2, 3, 4]},
+                    "num_heads": {"values": [1, 2, 3, 4]},
                     "dropout": {"min": 0.0, "max": 0.1},
-                    "lag": {"min": 1, "max": 24},
+                    "lag": {"min": 1, "max": 32},
                     "weather_future": {"min": 12, "max": 24},
                     "dim_feedforward_factor": {
-                        "values": [0.5, 1.0, 2.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+                        "values": [
+                            0.5,
+                            1.0,
+                            2.0,
+                            3.0,
+                            4.0,
+                            5.0,
+                            6.0,
+                            7.0,
+                            8.0,
+                            9.0,
+                            10.0,
+                        ]
                     },
-                    "batch_size": {"values": [512]},
-                    "lr": {"min": 1e-4, "max": 1e-3},
+                    "batch_size": {"values": [512, 256, 128, 64]},
+                    "lr": {"min": 1e-4, "max": 1e-2},
                     "min_lr": {"min": 1e-8, "max": 1e-5},
                 },
             }
