@@ -1,1 +1,0 @@
-screen -S hyperopt -d -m bash -c "python3 -m pipeline.models.hyperopt" 
