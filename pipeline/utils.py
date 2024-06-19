@@ -10,4 +10,4 @@ def current_time_str():
     # Format the time and date to include seconds in the specified format
     current_time = now.strftime("%H:%M:%S %d-%m-%Y")
     # Combine the hostname with the current time string
-    return f"{hostname} {current_time}"
+    return f"{hostname}_{current_time}"
