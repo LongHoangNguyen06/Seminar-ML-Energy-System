@@ -20,14 +20,15 @@ def get_config():
     CONF.data.loaded_raw_data = False  # Don't change this
 
     # Pipeline configuration
-    CONF.pipeline.process_raw_data = False
-    CONF.pipeline.normalize_data = False
-    CONF.pipeline.feature_selection = False
+    CONF.pipeline.process_raw_data = True
+    CONF.pipeline.price_differencing = True
+    CONF.pipeline.normalize_data = True
+    CONF.pipeline.feature_selection = True
     CONF.pipeline.data_test = False
     CONF.pipeline.do_test_run_training = False
     CONF.pipeline.do_hyperopt = False
-    CONF.pipeline.do_final_train = True
-    CONF.pipeline.do_test = True
+    CONF.pipeline.do_final_train = False
+    CONF.pipeline.do_test = False
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
 
@@ -76,6 +77,8 @@ def get_config():
 
     # Configuration for feature selection
     CONF.feature_selection.all_features = [
+        # "Date from",
+        # "Date to",
         "prices_Germany/Luxembourg [€/MWh]",
         "prices_Belgium [€/MWh]",
         "prices_Denmark 1 [€/MWh]",
@@ -89,6 +92,19 @@ def get_config():
         "prices_Czech Republic [€/MWh]",
         "prices_Italy (North) [€/MWh]",
         "prices_Slovenia [€/MWh]",
+        "prices_diff_Germany/Luxembourg [€/MWh]",
+        "prices_diff_Belgium [€/MWh]",
+        "prices_diff_Denmark 1 [€/MWh]",
+        "prices_diff_Denmark 2 [€/MWh]",
+        "prices_diff_France [€/MWh]",
+        "prices_diff_Netherlands [€/MWh]",
+        "prices_diff_Norway 2 [€/MWh]",
+        "prices_diff_Austria [€/MWh]",
+        "prices_diff_Sweden 4 [€/MWh]",
+        "prices_diff_Switzerland [€/MWh]",
+        "prices_diff_Czech Republic [€/MWh]",
+        "prices_diff_Italy (North) [€/MWh]",
+        "prices_diff_Slovenia [€/MWh]",
         "capacity_Biomass [MW]",
         "capacity_Hydro Power [MW]",
         "capacity_Wind Offshore [MW] ",
@@ -116,6 +132,7 @@ def get_config():
         "demand_Total (Grid Load) [MWh]",
         "demand_Residual Load [MWh]",
         "demand_Pumped Storage [MWh]",
+        # "weather_forecast_origin",
         "weather_cdir_min",
         "weather_cdir_max",
         "weather_cdir_mean",
@@ -161,23 +178,39 @@ def get_config():
         "weather_v100_min",
         "weather_v100_max",
         "weather_v100_mean",
+        # "train",
+        # "val",
+        # "test",
     ]
 
     # Time series hyper parameters
     CONF.model.features = [
-        "prices_Germany/Luxembourg [€/MWh]",
-        "prices_Belgium [€/MWh]",
-        "prices_Denmark 1 [€/MWh]",
-        "prices_Denmark 2 [€/MWh]",
-        "prices_France [€/MWh]",
-        "prices_Netherlands [€/MWh]",
-        "prices_Norway 2 [€/MWh]",
-        "prices_Austria [€/MWh]",
-        "prices_Sweden 4 [€/MWh]",
-        "prices_Switzerland [€/MWh]",
-        "prices_Czech Republic [€/MWh]",
-        "prices_Italy (North) [€/MWh]",
-        "prices_Slovenia [€/MWh]",
+        # "prices_Germany/Luxembourg [€/MWh]",
+        # "prices_Belgium [€/MWh]",
+        # "prices_Denmark 1 [€/MWh]",
+        # "prices_Denmark 2 [€/MWh]",
+        # "prices_France [€/MWh]",
+        # "prices_Netherlands [€/MWh]",
+        # "prices_Norway 2 [€/MWh]",
+        # "prices_Austria [€/MWh]",
+        # "prices_Sweden 4 [€/MWh]",
+        # "prices_Switzerland [€/MWh]",
+        # "prices_Czech Republic [€/MWh]",
+        # "prices_Italy (North) [€/MWh]",
+        # "prices_Slovenia [€/MWh]",
+        "prices_diff_Germany/Luxembourg [€/MWh]",
+        "prices_diff_Belgium [€/MWh]",
+        "prices_diff_Denmark 1 [€/MWh]",
+        "prices_diff_Denmark 2 [€/MWh]",
+        "prices_diff_France [€/MWh]",
+        "prices_diff_Netherlands [€/MWh]",
+        "prices_diff_Norway 2 [€/MWh]",
+        "prices_diff_Austria [€/MWh]",
+        "prices_diff_Sweden 4 [€/MWh]",
+        "prices_diff_Switzerland [€/MWh]",
+        "prices_diff_Czech Republic [€/MWh]",
+        "prices_diff_Italy (North) [€/MWh]",
+        "prices_diff_Slovenia [€/MWh]",
         "capacity_Biomass [MW]",
         "capacity_Hydro Power [MW]",
         "capacity_Wind Offshore [MW] ",
@@ -205,6 +238,7 @@ def get_config():
         "demand_Total (Grid Load) [MWh]",
         "demand_Residual Load [MWh]",
         "demand_Pumped Storage [MWh]",
+        "weather_forecast_origin",
         "weather_cdir_min",
         "weather_cdir_max",
         "weather_cdir_mean",
