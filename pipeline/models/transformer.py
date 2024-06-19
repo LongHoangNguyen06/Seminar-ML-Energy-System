@@ -2,6 +2,7 @@ import math
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class PositionalEncoding(nn.Module):
@@ -82,4 +83,10 @@ class TimeSeriesTransformer(nn.Module):
         pooled_transformed = transformed.mean(dim=0)
 
         # Forecast
-        return torch.stack([fc(pooled_transformed) for fc in self.fc_out], dim=1)
+        output = torch.stack([fc(pooled_transformed) for fc in self.fc_out], dim=1)
+
+        # Apply ReLU if not in training mode
+        if not self.training:
+            output = F.relu(output)
+
+        return output
