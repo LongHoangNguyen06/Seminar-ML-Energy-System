@@ -13,19 +13,19 @@ def get_config():
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.sweep_name = (
-        "0002_multitask_supply_1h_24h_fewer_layers_fewer_heads_more_ff"
+        "0003_multitask_supply_1h_24h_fewer_heads_more_ff_price_diff"
     )
 
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
 
     # Pipeline configuration
-    CONF.pipeline.process_raw_data = True
-    CONF.pipeline.price_differencing = True
-    CONF.pipeline.normalize_data = True
-    CONF.pipeline.feature_selection = True
+    CONF.pipeline.process_raw_data = False
+    CONF.pipeline.price_differencing = False
+    CONF.pipeline.normalize_data = False
+    CONF.pipeline.feature_selection = False
     CONF.pipeline.data_test = False
-    CONF.pipeline.do_test_run_training = False
+    CONF.pipeline.do_test_run_training = True
     CONF.pipeline.do_hyperopt = False
     CONF.pipeline.do_final_train = False
     CONF.pipeline.do_test = False
@@ -238,7 +238,7 @@ def get_config():
         "demand_Total (Grid Load) [MWh]",
         "demand_Residual Load [MWh]",
         "demand_Pumped Storage [MWh]",
-        "weather_forecast_origin",
+        # "weather_forecast_origin",
         "weather_cdir_min",
         "weather_cdir_max",
         "weather_cdir_mean",
@@ -296,12 +296,12 @@ def get_config():
     CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
 
     # Transformer's architecture's tunable hyperparameters
-    CONF.model.num_layers = 12
-    CONF.model.num_heads = 8
+    CONF.model.num_layers = 1
+    CONF.model.num_heads = 1
     CONF.model.dropout = 0.24262630420417408
     CONF.model.lag = 64
     CONF.model.weather_future = 12
-    CONF.model.dim_feedforward_factor = 4
+    CONF.model.dim_feedforward_factor = 0.5
 
     # Training tunable hyperparameters
     CONF.train.batch_size = 256

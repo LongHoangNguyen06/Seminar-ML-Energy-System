@@ -59,13 +59,13 @@ def hyper_parameter_optimize(sweep_id=None):
                     "name": "best_val_loss",  # Replace with the metric you want to optimize
                 },
                 "parameters": {
-                    "num_layers": {"values": [2]},
-                    "num_heads": {"values": [2, 4]},
+                    "num_layers": {"values": [1, 2]},
+                    "num_heads": {"values": [1, 2, 4]},
                     "dropout": {"min": 0.0, "max": 0.1},
                     "lag": {"min": 1, "max": 24},
                     "weather_future": {"min": 12, "max": 24},
                     "dim_feedforward_factor": {
-                        "values": [1.0, 2.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+                        "values": [0.5, 1.0, 2.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
                     },
                     "batch_size": {"values": [512, 256, 128, 64]},
                     "lr": {"min": 1e-3, "max": 1e-2},
