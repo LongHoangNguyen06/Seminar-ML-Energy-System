@@ -13,7 +13,7 @@ def get_config():
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.sweep_name = (
-        "0003_multitask_supply_1h_24h_fewer_heads_more_ff_price_diff"
+        "0003_multitask_supply_1h_24h_fewer_heads_more_ff_price_diff_odd_d_model"
     )
 
     # Fixed variables, don't change
