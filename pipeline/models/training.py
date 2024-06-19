@@ -91,7 +91,7 @@ def train_loop(
     # Initialize data
     if merge_train_val:
         train_df = df[df["train"] | df["val"]].reset_index(drop=True)
-        val_df = df[df["val"]].reset_index(drop=True)
+        val_df = df[df["test"]].reset_index(drop=True)
     else:
         train_df = df[df["train"]].reset_index(drop=True)
         val_df = df[df["val"]].reset_index(drop=True)

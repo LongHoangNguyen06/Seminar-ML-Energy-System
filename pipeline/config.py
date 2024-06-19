@@ -26,7 +26,7 @@ def get_config():
     CONF.pipeline.data_test = False
     CONF.pipeline.do_test_run_training = False
     CONF.pipeline.do_hyperopt = False
-    CONF.pipeline.do_final_train = False
+    CONF.pipeline.do_final_train = True
     CONF.pipeline.do_test = True
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
@@ -60,10 +60,18 @@ def get_config():
         CONF.data.data_dir, "models", CONF.wandb.sweep_name
     )
     CONF.model.final_model_path = os.path.join(
-        CONF.model.save_path, "23:19:14 18-06-2024", "model.pth"
+        CONF.data.data_dir,
+        "models",
+        "0001_multitask_supply_1h_24h_more_layers",
+        "best",
+        "model.pth",
     )
     CONF.model.best_hyperparameter_path = os.path.join(
-        CONF.model.save_path, "23:19:14 18-06-2024", "hyperparameters.pth"
+        CONF.data.data_dir,
+        "models",
+        "0001_multitask_supply_1h_24h_more_layers",
+        "23:19:14 18-06-2024",
+        "hyperparameters.pth",
     )
 
     # Configuration for feature selection
