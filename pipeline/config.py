@@ -55,10 +55,12 @@ def get_config():
     # Time series prediction configuration
     CONF.model.horizons = [1, 24]
 
-    # Save paths configuration
+    # Save paths configuration.
     CONF.model.save_path = os.path.join(
         CONF.data.data_dir, "models", CONF.wandb.sweep_name
     )
+
+    # Configurations when doing evaluation.
     CONF.model.final_model_path = os.path.join(
         CONF.data.data_dir,
         "models",
@@ -298,15 +300,15 @@ def get_config():
     CONF.model.architecture = MultiTaskTransformer
     CONF.model.num_layers = 1
     CONF.model.num_heads = 1
-    CONF.model.dropout = 0.24262630420417408
-    CONF.model.lag = 64
+    CONF.model.dropout = 0.1
+    CONF.model.lag = 24
     CONF.model.weather_future = 12
     CONF.model.dim_feedforward_factor = 0.5
 
     # Training tunable hyperparameters
     CONF.train.batch_size = 256
-    CONF.train.lr = 0.08101450401430181
-    CONF.train.min_lr = 5.916627615915352e-07
+    CONF.train.lr = 0.001
+    CONF.train.min_lr = 0.00001
 
     # Fixed hyper parameters
     CONF.train.loss = RMSE
