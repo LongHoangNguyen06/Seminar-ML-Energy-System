@@ -13,7 +13,7 @@ def get_config():
     # Wandb configuration
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.sweep_name = "006_hyperoptimize_optimizers_and_clip_grad"
+    CONF.wandb.sweep_name = "007_even_larger_optimization_space"
 
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
