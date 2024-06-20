@@ -105,6 +105,10 @@ def hyper_parameter_optimize(sweep_id=None):
                 },
             }
         )
+        with open("agent.sh", "w") as f:
+            f.write(
+                f'screen -S hyperopt -d -m bash -c "python3 -m pipeline.models.hyperopt {sweep_id}"'
+            )
 
     wandb.agent(
         sweep_id,

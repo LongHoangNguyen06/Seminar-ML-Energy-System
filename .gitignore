@@ -165,3 +165,4 @@ tmp
 pipeline/best_hyperparameters.py
 **/wandb
 *.png
+agent.sh
