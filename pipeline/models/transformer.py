@@ -2,7 +2,6 @@ import math
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 def build_model(hyperparameters):
@@ -95,13 +94,7 @@ class Transformer(nn.Module):
         pooled_transformed = transformed.mean(dim=0)
 
         # Forecast
-        output = self.fc_out(pooled_transformed)
-
-        # Apply ReLU if not in training mode
-        if not self.training:
-            output = F.relu(output)
-
-        return output
+        return self.fc_out(pooled_transformed)
 
 
 class MultiTaskTransformer(nn.Module):

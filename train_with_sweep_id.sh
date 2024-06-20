@@ -1,1 +1,1 @@
-screen -S hyperopt -d -m bash -c "python3 -m pipeline.models.hyperopt v4wi271v" 
+screen -S hyperopt -d -m bash -c "python3 -m pipeline.models.hyperopt fpudlemw" 
