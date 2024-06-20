@@ -309,7 +309,7 @@ def get_config():
     CONF.train.batch_size = 256
     CONF.train.lr = 0.001
     CONF.train.min_lr = 0.00001
-    CONF.train.clip_grad = True
+    CONF.train.clip_grad = 1.0
     CONF.train.optimizer = torch.optim.AdamW
 
     # Fixed hyper parameters

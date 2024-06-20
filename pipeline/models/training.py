@@ -26,8 +26,9 @@ def train(model, train_loader, optimizer, criterion, scheduler, hyperparameters)
         outputs = model(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
-        if hyperparameters.train.clip_grad is True:
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
+        torch.nn.utils.clip_grad_norm_(
+            model.parameters(), hyperparameters.train.clip_grad
+        )
         optimizer.step()
         total_loss += loss.item()
         progress_bar.set_postfix({"batch_loss": f"{loss.item():.4f}"})

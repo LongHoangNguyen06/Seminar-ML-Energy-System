@@ -2,6 +2,7 @@ import os
 import sys
 import traceback
 
+import numpy as np
 import pandas as pd
 import torch
 
@@ -40,6 +41,8 @@ def exception_handling_train(df):
             hyperparameters.train.optimizer = torch.optim.AdamW
         elif config["optimizer"] == "RMSprop":
             hyperparameters.train.optimizer = torch.optim.RMSprop
+        elif config["optimizer"] == "Adagrad":
+            hyperparameters.train.optimizer = torch.optim.Adagrad
         else:
             raise ValueError("Invalid optimizer")
         try:
@@ -77,31 +80,22 @@ def hyper_parameter_optimize(sweep_id=None):
                             "TargetTransformer",
                         ]
                     },
-                    "num_layers": {"values": [1, 2, 3, 4]},
-                    "num_heads": {"values": [1, 2, 3, 4]},
+                    "num_layers": {"values": list(range(1, 10))},
+                    "num_heads": {"values": list(range(1, 10))},
                     "dropout": {"min": 0.0, "max": 0.5},
-                    "lag": {"min": 1, "max": 32},
+                    "lag": {"min": 1, "max": 48},
                     "weather_future": {"min": 12, "max": 24},
                     "dim_feedforward_factor": {
-                        "values": [
-                            0.5,
-                            1.0,
-                            2.0,
-                            3.0,
-                            4.0,
-                            5.0,
-                            6.0,
-                            7.0,
-                            8.0,
-                            9.0,
-                            10.0,
-                        ]
+                        "values": np.array(list(range(1, 15)))
+                        .astype(np.float32)
+                        .tolist()
+                        + [0.5]
                     },
                     "batch_size": {"values": [512, 256, 128, 64]},
                     "lr": {"min": 1e-4, "max": 1e-2},
                     "min_lr": {"min": 1e-8, "max": 1e-5},
-                    "clip_grad": {"values": [True, False]},
-                    "optimizer": {"values": ["Adam", "AdamW", "RMSprop"]},
+                    "clip_grad": {"min": 0.1, "max": 5.0},
+                    "optimizer": {"values": ["Adam", "AdamW", "RMSprop", "Adagrad"]},
                 },
             }
         )
