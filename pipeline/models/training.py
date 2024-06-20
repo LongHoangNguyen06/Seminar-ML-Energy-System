@@ -20,10 +20,14 @@ def train(model, train_loader, optimizer, criterion, scheduler, hyperparameters)
     model.train()
     total_loss = 0
     progress_bar = tqdm(train_loader, desc="Training", leave=False)
-    for inputs, targets in progress_bar:
-        inputs, targets = inputs.to(device), targets.to(device)
+    for (past, forecast), targets in progress_bar:
+        past, forecast, targets = (
+            past.to(device),
+            forecast.to(device),
+            targets.to(device),
+        )
         optimizer.zero_grad()
-        outputs = model(inputs)
+        outputs = model((past, forecast))
         loss = criterion(outputs, targets)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(
@@ -43,9 +47,13 @@ def validate(model, val_loader, criterion):
     total_loss = 0
     progress_bar = tqdm(val_loader, desc="Validation", leave=False)
     with torch.no_grad():
-        for inputs, targets in progress_bar:
-            inputs, targets = inputs.to(device), targets.to(device)
-            outputs = model(inputs)
+        for (past, forecast), targets in progress_bar:
+            past, forecast, targets = (
+                past.to(device),
+                forecast.to(device),
+                targets.to(device),
+            )
+            outputs = model((past, forecast))
             loss = criterion(outputs, targets)
             total_loss += loss.item()
             progress_bar.set_postfix({"batch_loss": f"{loss.item():.4f}"})

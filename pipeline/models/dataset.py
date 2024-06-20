@@ -21,6 +21,7 @@ class TimeSeriesDataset(Dataset):
         self.total_samples = len(df) - (self.lag + self.max_horizon)
         self.lags_array = np.array([lag for lag in range(self.lag)])
         self.horizon_array = np.array([horizon for horizon in self.horizons])
+        self.weather_horizon_array = np.array([i for i in range(0, 24)])
         self.data = df.to_numpy()
         self.feature_indices = np.array([df.columns.get_loc(f) for f in self.features])
         self.target_indices = np.array([df.columns.get_loc(t) for t in self.targets])
@@ -48,17 +49,15 @@ class TimeSeriesDataset(Dataset):
         time_features = time_features.expand(lagged_features.size(0), -1)
 
         # Adding future weather data
-        weather_forecast = self.get_forecast_features(idx)
-        weather_forecast = weather_forecast.expand(lagged_features.size(0), -1)
+        forecast = self.get_forecast_features(idx)
 
         # Concatenate everything together
-        X = torch.cat(
-            [lagged_features, lagged_targets, time_features, weather_forecast], dim=-1
-        ).to(torch.float32)
+        past = torch.cat([lagged_features, lagged_targets, time_features], dim=-1).to(
+            torch.float32
+        )
         y = self.get_targets(idx).to(torch.float32)
-
         # Return the input and output tensors
-        return X, y
+        return (past, forecast), y
 
     def get_feature_names(self):
         # Adjust start index to accommodate the lag
@@ -79,8 +78,9 @@ class TimeSeriesDataset(Dataset):
         rets.append("day_of_year")
 
         # Forecast
-        for feature in self.weather_features:
-            rets.append(f"{feature}_future_{1}h")
+        for h in self.weather_horizon_array:
+            for feature in self.weather_features:
+                rets.append(f"{feature}_future_{h}h")
 
         return rets
 
@@ -109,8 +109,8 @@ class TimeSeriesDataset(Dataset):
         return torch.tensor([hour_of_day, day_of_year]).to(torch.float32).unsqueeze(0)
 
     def get_forecast_features(self, idx):
-        # Extract future weather forecast data
-        future_weather_data = (
-            self.data[idx + 1, self.weather_indices].astype(float).flatten()
-        )
-        return torch.tensor(list(future_weather_data)).to(torch.float32).unsqueeze(0)
+        future_weather_data = self.data[
+            np.ix_(idx + self.weather_horizon_array, self.weather_indices)
+        ].astype(float)
+        output = torch.tensor(list(future_weather_data)).to(torch.float32)
+        return output

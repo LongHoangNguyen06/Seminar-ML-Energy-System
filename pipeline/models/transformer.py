@@ -48,12 +48,19 @@ class PositionalEncoding(nn.Module):
 class Transformer(nn.Module):
     def __init__(self, hyperparameters, n_outputs):
         super().__init__()
+        self.hyperparameters = hyperparameters
         d_model = hyperparameters.model.num_features * hyperparameters.model.num_heads
         self.output_horizons = hyperparameters.model.horizons
 
         # Linear transformation to project input features to a higher dimensional space
-        self.feature_to_embedding = nn.Linear(
+        self.past_to_embedding = nn.Linear(
             in_features=hyperparameters.model.num_features,
+            out_features=d_model,
+        )
+
+        # Linear transformation to project forecast features to a higher dimensional space
+        self.forecast_to_embedding = nn.Linear(
+            in_features=hyperparameters.model.decoder_num_features,
             out_features=d_model,
         )
 
@@ -72,28 +79,33 @@ class Transformer(nn.Module):
             self.encoder_layer, num_layers=hyperparameters.model.num_heads
         )
 
-        # Output layer for each horizon and feature
+        # Transformer Decoder Layer
+        self.decoder_layer = nn.TransformerDecoderLayer(
+            d_model=d_model,
+            nhead=hyperparameters.model.num_heads,
+            dim_feedforward=int(d_model * hyperparameters.model.dim_feedforward_factor),
+            dropout=hyperparameters.model.dropout,
+        )
+        self.transformer_decoder = nn.TransformerDecoder(
+            self.decoder_layer, num_layers=hyperparameters.model.num_heads
+        )
+
+        # Output layer
         self.fc_out = nn.Linear(d_model, n_outputs)
 
-    def forward(self, src):
-        src = src.permute(
-            1, 0, 2
-        )  # Permute to (sequence_length, batch_size, num_features)
+    def forward(self, x):
+        past, forecast = x
+        past = past.permute(1, 0, 2)
+        past = self.past_to_embedding(past)
+        past = self.positional_encoder(past)
+        past = self.transformer_encoder(past)
 
-        src = self.feature_to_embedding(
-            src
-        )  # Map features to the higher dimensional space
+        forecast = forecast.permute(1, 0, 2)
+        forecast = self.forecast_to_embedding(forecast)
+        forecast = self.positional_encoder(forecast)
 
-        # Apply positional encoding
-        src = self.positional_encoder(src)
-
-        # Apply transformer encoder
-        transformed = self.transformer_encoder(src)
-
-        # Use all tokens for forecasting
+        transformed = self.transformer_decoder(tgt=forecast, memory=past)
         pooled_transformed = transformed.mean(dim=0)
-
-        # Forecast
         return self.fc_out(pooled_transformed)
 
 
@@ -106,9 +118,9 @@ class MultiTaskTransformer(nn.Module):
             hyperparameters, n_outputs=self.n_targets * self.n_horzions
         )
 
-    def forward(self, src):
-        outputs = self.model(src)
-        return outputs.view(src.size(0), self.n_horzions, self.n_targets)
+    def forward(self, x):
+        outputs = self.model(x)
+        return outputs.view(x[0].size(0), self.n_horzions, self.n_targets)
 
 
 class HorizonTransformer(nn.Module):
@@ -123,10 +135,10 @@ class HorizonTransformer(nn.Module):
             ]
         )
 
-    def forward(self, src):
-        outputs = [model(src) for model in self.models]
+    def forward(self, x):
+        outputs = [model(x) for model in self.models]
         return torch.cat(outputs, dim=1).view(
-            src.size(0), self.n_horzions, self.n_targets
+            x[0].size(0), self.n_horzions, self.n_targets
         )
 
 
@@ -142,10 +154,10 @@ class TargetTransformer(nn.Module):
             ]
         )
 
-    def forward(self, src):
-        outputs = [model(src) for model in self.models]
+    def forward(self, x):
+        outputs = [model(x) for model in self.models]
         return torch.stack(outputs, dim=2).view(
-            src.size(0), self.n_horzions, self.n_targets
+            x[0].size(0), self.n_horzions, self.n_targets
         )
 
 
@@ -162,8 +174,8 @@ class HorizonTargetTransformer(nn.Module):
         self.n_horzions = len(hyperparameters.model.horizons)
         self.n_targets = len(hyperparameters.model.targets)
 
-    def forward(self, src):
-        outputs = [model(src) for model in self.models]
+    def forward(self, x):
+        outputs = [model(x) for model in self.models]
         return torch.stack(outputs, dim=2).view(
-            src.size(0), self.n_horzions, self.n_targets
+            x[0].size(0), self.n_horzions, self.n_targets
         )

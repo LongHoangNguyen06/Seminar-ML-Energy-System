@@ -343,18 +343,16 @@ def get_config():
     # Transformer's architecture's fixed hyperparameters
     CONF.model.num_targets = len(CONF.model.targets)
     CONF.model.num_features = (
-        len(CONF.model.features)
-        + len(CONF.model.targets)
-        + 2
-        + len(CONF.model.weather_features)
+        len(CONF.model.features) + len(CONF.model.targets) + 2
     )  # 2 for hour of day and day of year + forecasts in future
+    CONF.model.decoder_num_features = len(CONF.model.weather_features)
 
     # Transformer's architecture's tunable hyperparameters
     CONF.model.architecture = "HorizonTargetTransformer"
     CONF.model.num_layers = 1
     CONF.model.num_heads = 1
     CONF.model.dropout = 0.1
-    CONF.model.lag = 24
+    CONF.model.lag = 12
     CONF.model.dim_feedforward_factor = 0.5
 
     # Training tunable hyperparameters
