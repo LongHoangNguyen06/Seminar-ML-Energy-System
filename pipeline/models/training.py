@@ -4,7 +4,6 @@ import random
 
 import numpy as np
 import torch
-from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR as Scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -17,7 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # Training loop
-def train(model, train_loader, optimizer, criterion, scheduler):
+def train(model, train_loader, optimizer, criterion, scheduler, clip_grad=True):
     model.train()
     total_loss = 0
     progress_bar = tqdm(train_loader, desc="Training", leave=False)
@@ -27,6 +26,8 @@ def train(model, train_loader, optimizer, criterion, scheduler):
         outputs = model(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
+        if clip_grad:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
         optimizer.step()
         total_loss += loss.item()
         progress_bar.set_postfix({"batch_loss": f"{loss.item():.4f}"})
@@ -109,7 +110,9 @@ def train_loop(
     # Initialize model
     model = build_model(hyperparameters=hyperparameters)
     model = model.to(device)
-    optimizer = Adam(model.parameters(), lr=hyperparameters.train.lr)
+    optimizer = hyperparameters.train.optimizer(
+        model.parameters(), lr=hyperparameters.train.lr
+    )
     criterion = hyperparameters.train.loss()
 
     scheduler = Scheduler(

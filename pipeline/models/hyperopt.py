@@ -3,6 +3,7 @@ import sys
 import traceback
 
 import pandas as pd
+import torch
 
 import wandb
 from pipeline import utils
@@ -32,6 +33,15 @@ def exception_handling_train(df):
         hyperparameters.train.batch_size = config["batch_size"]
         hyperparameters.train.lr = config["lr"]
         hyperparameters.train.min_lr = config["min_lr"]
+        hyperparameters.train.clip_grad = config["clip_grad"]
+        if config["optimizer"] == "Adam":
+            hyperparameters.train.optimizer = torch.optim.Adam
+        elif config["optimizer"] == "AdamW":
+            hyperparameters.train.optimizer = torch.optim.AdamW
+        elif config["optimizer"] == "RMSprop":
+            hyperparameters.train.optimizer = torch.optim.RMSprop
+        else:
+            raise ValueError("Invalid optimizer")
         try:
             training.train_loop(
                 hyperparameters,
@@ -69,7 +79,7 @@ def hyper_parameter_optimize(sweep_id=None):
                     },
                     "num_layers": {"values": [1, 2, 3, 4]},
                     "num_heads": {"values": [1, 2, 3, 4]},
-                    "dropout": {"min": 0.0, "max": 0.1},
+                    "dropout": {"min": 0.0, "max": 0.5},
                     "lag": {"min": 1, "max": 32},
                     "weather_future": {"min": 12, "max": 24},
                     "dim_feedforward_factor": {
@@ -90,6 +100,8 @@ def hyper_parameter_optimize(sweep_id=None):
                     "batch_size": {"values": [512, 256, 128, 64]},
                     "lr": {"min": 1e-4, "max": 1e-2},
                     "min_lr": {"min": 1e-8, "max": 1e-5},
+                    "clip_grad": {"values": [True, False]},
+                    "optimizer": {"values": ["Adam", "AdamW", "RMSprop"]},
                 },
             }
         )

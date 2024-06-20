@@ -1,6 +1,7 @@
 # flake8: noqa
 import os
 
+import torch
 from dotmap import DotMap
 
 from pipeline.models.loss import RMSE
@@ -308,6 +309,8 @@ def get_config():
     CONF.train.batch_size = 256
     CONF.train.lr = 0.001
     CONF.train.min_lr = 0.00001
+    CONF.train.clip_grad = True
+    CONF.train.optimizer = torch.optim.AdamW
 
     # Fixed hyper parameters
     CONF.train.loss = RMSE
