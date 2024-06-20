@@ -3,12 +3,12 @@ import sys
 import traceback
 
 import numpy as np
-import pandas as pd
 import torch
 
 import wandb
 from pipeline import utils
 from pipeline.config import CONF, get_config
+from pipeline.data import io
 from pipeline.models import training
 
 os.environ["WANDB_TIMEOUT"] = "300"
@@ -60,7 +60,7 @@ def exception_handling_train(df):
 
 
 def hyper_parameter_optimize(sweep_id=None):
-    df = pd.read_csv(os.path.join(CONF.data.preprocessed_data_dir, "df.csv"))
+    df = io.load_final_df(CONF)
     if sweep_id is None:
         sweep_id = wandb.sweep(
             {
