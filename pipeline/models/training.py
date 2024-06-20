@@ -16,7 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # Training loop
-def train(model, train_loader, optimizer, criterion, scheduler, clip_grad=True):
+def train(model, train_loader, optimizer, criterion, scheduler, hyperparameters):
     model.train()
     total_loss = 0
     progress_bar = tqdm(train_loader, desc="Training", leave=False)
@@ -26,7 +26,7 @@ def train(model, train_loader, optimizer, criterion, scheduler, clip_grad=True):
         outputs = model(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
-        if clip_grad:
+        if hyperparameters.train.clip_grad is True:
             torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
         optimizer.step()
         total_loss += loss.item()
@@ -126,7 +126,14 @@ def train_loop(
     patience_counter = 0  # Initialize the patience counter
     best_val_loss = float("inf")
     for epoch in range(num_epochs):
-        train_loss = train(model, train_loader, optimizer, criterion, scheduler)
+        train_loss = train(
+            model,
+            train_loader,
+            optimizer,
+            criterion,
+            scheduler,
+            hyperparameters=hyperparameters,
+        )
         val_loss = validate(model, val_loader, criterion)
         lr = optimizer.param_groups[0]["lr"]
 
