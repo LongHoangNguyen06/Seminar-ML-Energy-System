@@ -5,11 +5,10 @@ import random
 import numpy as np
 import torch
 from torch.optim.lr_scheduler import CosineAnnealingLR as Scheduler
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 import wandb
-from pipeline.models.dataset import TimeSeriesDataset
+from pipeline.models.dataset import TimeSeriesDataLoader, TimeSeriesDataset
 from pipeline.models.transformer import build_model
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -109,11 +108,11 @@ def train_loop(
     train_dataset = TimeSeriesDataset(train_df, hyperparameters=hyperparameters)
     val_dataset = TimeSeriesDataset(val_df, hyperparameters=hyperparameters)
 
-    train_loader = DataLoader(
-        train_dataset, batch_size=hyperparameters.train.batch_size, shuffle=True
+    train_loader = TimeSeriesDataLoader(
+        train_dataset, batch_size=hyperparameters.train.batch_size, dataframe=train_df
     )
-    val_loader = DataLoader(
-        val_dataset, batch_size=hyperparameters.train.batch_size, shuffle=False
+    val_loader = TimeSeriesDataLoader(
+        val_dataset, batch_size=hyperparameters.train.batch_size, dataframe=val_df
     )
 
     # Initialize model
