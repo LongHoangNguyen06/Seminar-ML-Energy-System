@@ -28,7 +28,6 @@ def exception_handling_train(df):
         hyperparameters.model.num_heads = config["num_heads"]
         hyperparameters.model.dropout = config["dropout"]
         hyperparameters.model.lag = config["lag"]
-        hyperparameters.model.weather_future = config["weather_future"]
         hyperparameters.model.dim_feedforward_factor = config["dim_feedforward_factor"]
 
         hyperparameters.train.batch_size = config["batch_size"]
@@ -84,7 +83,6 @@ def hyper_parameter_optimize(sweep_id=None):
                     "num_heads": {"values": list(range(1, 5))},
                     "dropout": {"min": 0.0, "max": 0.5},
                     "lag": {"min": 1, "max": 48},
-                    "weather_future": {"min": 12, "max": 24},
                     "dim_feedforward_factor": {
                         "values": np.array(list(range(1, 15)))
                         .astype(np.float32)

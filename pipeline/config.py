@@ -355,7 +355,6 @@ def get_config():
     CONF.model.num_heads = 1
     CONF.model.dropout = 0.1
     CONF.model.lag = 24
-    CONF.model.weather_future = 12
     CONF.model.dim_feedforward_factor = 0.5
 
     # Training tunable hyperparameters

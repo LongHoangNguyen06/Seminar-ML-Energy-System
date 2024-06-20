@@ -14,12 +14,9 @@ class TimeSeriesDataset(Dataset):
         self.weather_features = hyperparameters.model.weather_features
         self.lag = hyperparameters.model.lag
         self.horizons = hyperparameters.model.horizons
-        self.weather_future = (
-            hyperparameters.model.weather_future
-        )  # new parameter for future weather data
 
         # Determine the maximum horizon to ensure all targets can be accessed
-        self.max_horizon = max(self.horizons) + self.weather_future
+        self.max_horizon = max(self.horizons)
         # Calculate total samples considering the lag and the maximum forecast horizon
         self.total_samples = len(df) - (self.lag + self.max_horizon)
         self.lags_array = np.array([lag for lag in range(self.lag)])
