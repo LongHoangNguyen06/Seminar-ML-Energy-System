@@ -26,7 +26,7 @@ def get_config():
     CONF.pipeline.data_test = False
     CONF.pipeline.do_test_run_training = False
     CONF.pipeline.do_hyperopt = False
-    CONF.pipeline.do_final_train = True
+    CONF.pipeline.do_final_train = False
     CONF.pipeline.do_test = True
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
@@ -71,7 +71,7 @@ def get_config():
         CONF.data.data_dir,
         "models",
         "009_time_data_and_weather_forecast_24h_full_transformer",
-        "cgpoolsand1906_20:43:06:317144 20-06-2_654",
+        "cgpoolsand1906_23:38:59:619615 20-06-2_654",
         "hyperparameters.pth",
     )
 
