@@ -109,8 +109,13 @@ class TimeSeriesDataset(Dataset):
         return torch.tensor([hour_of_day, day_of_year]).to(torch.float32).unsqueeze(0)
 
     def get_forecast_features(self, idx):
+        # Extract future weather forecast data
         future_weather_data = self.data[
             np.ix_(idx + self.weather_horizon_array, self.weather_indices)
         ].astype(float)
+        # mask the data that should be ignored
+        datetime_index = self.dataframe["Date from"][idx]
+        hour_of_day = datetime_index.hour
+        future_weather_data[24 - hour_of_day :] = 0.0  # noqa: E203
         output = torch.tensor(list(future_weather_data)).to(torch.float32)
         return output
