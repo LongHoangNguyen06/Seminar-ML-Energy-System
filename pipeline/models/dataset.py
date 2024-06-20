@@ -91,10 +91,10 @@ class TimeSeriesDataset(Dataset):
 
     def get_targets(self, idx):
         return torch.tensor(
-            self.dataframe.loc[idx + self.horizon_array, self.targets].values.astype(
+            self.data[np.ix_(idx + self.horizon_array, self.target_indices)].astype(
                 float
             )
-        )
+        )  # Shape: [n_lag, n_targets]
 
     def get_lagged_targets(self, idx):
         return torch.tensor(
