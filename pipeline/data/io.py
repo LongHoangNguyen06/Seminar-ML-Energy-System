@@ -110,3 +110,10 @@ def load_data(CONF):
         Weather_Data_Germany,
         Weather_Data_Germany_2022,
     )
+
+
+def load_final_df(CONF):
+    return pd.read_csv(
+        os.path.join(CONF.data.preprocessed_data_dir, "df.csv"),
+        parse_dates=DATE_COLUMNS,
+    )

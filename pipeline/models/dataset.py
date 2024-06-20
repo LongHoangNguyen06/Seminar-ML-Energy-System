@@ -11,6 +11,7 @@ class TimeSeriesDataset(Dataset):
         self.dataframe = df
         self.features = hyperparameters.model.features if features is None else features
         self.targets = hyperparameters.model.targets
+        self.weather_features = hyperparameters.model.weather_features
         self.lag = hyperparameters.model.lag
         self.horizons = hyperparameters.model.horizons
         self.weather_future = (
@@ -26,6 +27,9 @@ class TimeSeriesDataset(Dataset):
         self.data = df.to_numpy()
         self.feature_indices = np.array([df.columns.get_loc(f) for f in self.features])
         self.target_indices = np.array([df.columns.get_loc(t) for t in self.targets])
+        self.weather_indices = np.array(
+            [df.columns.get_loc(w) for w in self.weather_features]
+        )
 
     def __len__(self):
         return self.total_samples
@@ -37,37 +41,79 @@ class TimeSeriesDataset(Dataset):
         idx += self.lag
 
         # Collect inputs using the lag
-        input_features = torch.tensor(
-            self.data[np.ix_(idx - self.lags_array, self.feature_indices)].astype(float)
-        )  # Shape: [n_lag, n_features]
+        lagged_features = self.get_lagged_features(idx)
 
-        # Collect lagged targets as additional features
-        input_targets = torch.tensor(
-            self.data[np.ix_(idx - self.lags_array, self.target_indices)].astype(float)
-        )  # Shape: [n_lag, num_targets]
+        # Collect lagged targets
+        lagged_targets = self.get_lagged_targets(idx)
 
-        # Concatenate input features and lagged targets along the feature dimension
-        inputs = torch.cat((input_features, input_targets), dim=-1)
+        # Adding hour of day, day of year
+        time_features = self.get_time_features(idx)
+        time_features = time_features.expand(lagged_features.size(0), -1)
 
-        # Collect targets for each horizon and each feature
-        targets = torch.tensor(
-            self.dataframe.loc[idx + self.horizon_array, self.targets].values.astype(
-                float
-            )
-        )  # Shape will be [n_horizons, n_outputs]
-        return inputs.to(torch.float32), targets.to(torch.float32)
+        # Adding future weather data
+        weather_forecast = self.get_forecast_features(idx)
+        weather_forecast = weather_forecast.expand(lagged_features.size(0), -1)
+
+        # Concatenate everything together
+        X = torch.cat(
+            [lagged_features, lagged_targets, time_features, weather_forecast], dim=-1
+        ).to(torch.float32)
+        y = self.get_targets(idx).to(torch.float32)
+
+        # Return the input and output tensors
+        return X, y
 
     def get_feature_names(self):
         # Adjust start index to accommodate the lag
         rets = []
-        # Collect inputs using the lag
+
+        # Lagged features
         for lag in range(self.lag):
             for feature in self.features:
                 rets.append(f"{feature}_lag_{lag}")
 
-        # Collect lagged targets as additional features
+        # Lagged targets
         for lag in range(self.lag):
             for target in self.targets:
                 rets.append(f"{target}_lag_{lag}")
 
+        # Times
+        rets.append("hour_of_day")
+        rets.append("day_of_year")
+
+        # Forecast
+        for feature in self.weather_features:
+            rets.append(f"{feature}_future_{1}h")
+
         return rets
+
+    def get_lagged_features(self, idx):
+        return torch.tensor(
+            self.data[np.ix_(idx - self.lags_array, self.feature_indices)].astype(float)
+        )  # Shape: [n_lag, n_features]
+
+    def get_targets(self, idx):
+        return torch.tensor(
+            self.dataframe.loc[idx + self.horizon_array, self.targets].values.astype(
+                float
+            )
+        )
+
+    def get_lagged_targets(self, idx):
+        return torch.tensor(
+            self.data[np.ix_(idx - self.lags_array, self.target_indices)].astype(float)
+        )  # Shape: [n_lag, n_targets]
+
+    def get_time_features(self, idx):
+        # Extract hour of day and day of year features
+        datetime_index = self.dataframe["Date from"][idx]
+        hour_of_day = datetime_index.hour / 24.0
+        day_of_year = datetime_index.dayofyear / 365.0
+        return torch.tensor([hour_of_day, day_of_year]).to(torch.float32).unsqueeze(0)
+
+    def get_forecast_features(self, idx):
+        # Extract future weather forecast data
+        future_weather_data = (
+            self.data[idx + 1, self.weather_indices].astype(float).flatten()
+        )
+        return torch.tensor(list(future_weather_data)).to(torch.float32).unsqueeze(0)

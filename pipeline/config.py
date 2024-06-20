@@ -24,10 +24,10 @@ def get_config():
     CONF.pipeline.normalize_data = False
     CONF.pipeline.feature_selection = False
     CONF.pipeline.data_test = False
-    CONF.pipeline.do_test_run_training = False
+    CONF.pipeline.do_test_run_training = True
     CONF.pipeline.do_hyperopt = False
-    CONF.pipeline.do_final_train = True
-    CONF.pipeline.do_test = True
+    CONF.pipeline.do_final_train = False
+    CONF.pipeline.do_test = False
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
 
@@ -184,6 +184,54 @@ def get_config():
         # "test",
     ]
 
+    CONF.model.weather_features = [
+        "weather_cdir_min",
+        "weather_cdir_max",
+        "weather_cdir_mean",
+        "weather_z_min",
+        "weather_z_max",
+        "weather_z_mean",
+        "weather_msl_min",
+        "weather_msl_max",
+        "weather_msl_mean",
+        "weather_blh_min",
+        "weather_blh_max",
+        "weather_blh_mean",
+        "weather_tcc_min",
+        "weather_tcc_max",
+        "weather_tcc_mean",
+        "weather_u10_min",
+        "weather_u10_max",
+        "weather_u10_mean",
+        "weather_v10_min",
+        "weather_v10_max",
+        "weather_v10_mean",
+        "weather_t2m_min",
+        "weather_t2m_max",
+        "weather_t2m_mean",
+        "weather_ssr_min",
+        "weather_ssr_max",
+        "weather_ssr_mean",
+        "weather_tsr_min",
+        "weather_tsr_max",
+        "weather_tsr_mean",
+        "weather_sund_min",
+        "weather_sund_max",
+        "weather_sund_mean",
+        "weather_tp_min",
+        "weather_tp_max",
+        "weather_tp_mean",
+        "weather_fsr_min",
+        "weather_fsr_max",
+        "weather_fsr_mean",
+        "weather_u100_min",
+        "weather_u100_max",
+        "weather_u100_mean",
+        "weather_v100_min",
+        "weather_v100_max",
+        "weather_v100_mean",
+    ]
+
     # Time series hyper parameters
     CONF.model.features = [
         # "prices_Germany/Luxembourg [€/MWh]",
@@ -294,7 +342,12 @@ def get_config():
 
     # Transformer's architecture's fixed hyperparameters
     CONF.model.num_targets = len(CONF.model.targets)
-    CONF.model.num_features = len(CONF.model.features) + len(CONF.model.targets)
+    CONF.model.num_features = (
+        len(CONF.model.features)
+        + len(CONF.model.targets)
+        + 2
+        + len(CONF.model.weather_features)
+    )  # 2 for hour of day and day of year + forecasts in future
 
     # Transformer's architecture's tunable hyperparameters
     CONF.model.architecture = "HorizonTargetTransformer"
