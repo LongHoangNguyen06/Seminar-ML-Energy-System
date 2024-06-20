@@ -13,7 +13,7 @@ def get_config():
     # Wandb configuration
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.sweep_name = "009_time_data_and_weather_forecast_24h_full_transformer"
+    CONF.wandb.sweep_name = "011_time_data_and_weather_forecast_24h_full_transformer"
 
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
