@@ -24,10 +24,10 @@ def get_config():
     CONF.pipeline.normalize_data = False
     CONF.pipeline.feature_selection = False
     CONF.pipeline.data_test = False
-    CONF.pipeline.do_test_run_training = True
+    CONF.pipeline.do_test_run_training = False
     CONF.pipeline.do_hyperopt = False
-    CONF.pipeline.do_final_train = False
-    CONF.pipeline.do_test = False
+    CONF.pipeline.do_final_train = True
+    CONF.pipeline.do_test = True
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
 
@@ -64,15 +64,15 @@ def get_config():
     CONF.model.final_model_path = os.path.join(
         CONF.data.data_dir,
         "models",
-        "007_even_larger_optimization_space",
+        "011_time_data_and_weather_forecast_24h_full_transformer",
         "best",
         "model.pth",
     )
     CONF.model.best_hyperparameter_path = os.path.join(
         CONF.data.data_dir,
         "models",
-        "007_even_larger_optimization_space",
-        "cgpool1903_13:21:59:234901 20-06-2_654",
+        "011_time_data_and_weather_forecast_24h_full_transformer",
+        "cgpoolsand1900_22:56:09:970951 20-06-2_654",
         "hyperparameters.pth",
     )
 
