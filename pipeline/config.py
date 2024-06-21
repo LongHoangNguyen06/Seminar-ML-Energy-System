@@ -13,7 +13,7 @@ def get_config():
     # Wandb configuration
     CONF.wandb.project_name = "Seminar ML for Renewable Energy System"
     CONF.wandb.entity_name = "Seminar ML for Renewable Energy System"
-    CONF.wandb.sweep_name = "011_time_data_and_weather_forecast_24h_full_transformer"
+    CONF.wandb.sweep_name = "012_forecast_encoder_lags_decoder_better_bias"
 
     # Fixed variables, don't change
     CONF.data.loaded_raw_data = False  # Don't change this
@@ -24,10 +24,10 @@ def get_config():
     CONF.pipeline.normalize_data = False
     CONF.pipeline.feature_selection = False
     CONF.pipeline.data_test = False
-    CONF.pipeline.do_test_run_training = False
+    CONF.pipeline.do_test_run_training = True
     CONF.pipeline.do_hyperopt = False
-    CONF.pipeline.do_final_train = True
-    CONF.pipeline.do_test = True
+    CONF.pipeline.do_final_train = False
+    CONF.pipeline.do_test = False
     CONF.pipeline.plot = False  # False to make faster
     CONF.pipeline.inspect = False  # False to make faster
 

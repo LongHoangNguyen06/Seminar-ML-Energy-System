@@ -98,13 +98,13 @@ class Transformer(nn.Module):
         past = past.permute(1, 0, 2)
         past = self.past_to_embedding(past)
         past = self.positional_encoder(past)
-        past = self.transformer_encoder(past)
 
         forecast = forecast.permute(1, 0, 2)
         forecast = self.forecast_to_embedding(forecast)
         forecast = self.positional_encoder(forecast)
 
-        transformed = self.transformer_decoder(tgt=forecast, memory=past)
+        forecast = self.transformer_encoder(forecast)
+        transformed = self.transformer_decoder(tgt=past, memory=forecast)
         pooled_transformed = transformed.mean(dim=0)
         return self.fc_out(pooled_transformed)
 
